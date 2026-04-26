@@ -1,0 +1,29 @@
+targets:
+  $default:
+    builders:
+      freezed:
+        options:
+          # Generates a copyWith method
+          copyWith: true
+          # Generates an == operator
+          equal: true
+          # Generates a toString method
+          to_string: true
+          # Generates a fromJson/toJson methods
+          from_json: true
+          to_json: true
+          
+      json_serializable:
+        options:
+          # Generates toJson methods
+          explicit_to_json: true
+          # Includes values with null value
+          include_if_null: false
+          # Generates code that can handle null values
+          checked: true
+          # Creates a factory constructor for JSON
+          create_factory: true
+          # Creates toJson method
+          create_to_json: true
+          # Field renaming strategy
+          field_rename: snake

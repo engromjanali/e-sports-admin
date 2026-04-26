@@ -1,0 +1,108 @@
+name: clean_boilerplate
+description: A Clean Architecture Flutter boilerplate with BLoC and code generation
+publish_to: 'none'
+version: 1.0.0+0
+
+environment:
+  sdk: ^3.10.8
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # State Management
+  flutter_bloc: ^9.1.1
+  bloc: ^9.2.0
+  bloc_concurrency: ^0.3.0
+  hydrated_bloc: ^10.1.1
+  
+  # Dependency Injection
+  get_it: ^9.2.0
+  injectable: ^2.7.1+4
+  
+  # Navigation
+  go_router: ^17.1.0
+  
+  # Code Generation
+  freezed_annotation: ^3.1.0
+  json_annotation: ^4.10.0
+  
+  # Localization
+  intl: ^0.20.2
+  
+  # Network
+  dio: ^5.9.1
+  pretty_dio_logger: ^1.4.0
+  
+  # Local Storage
+  shared_preferences: ^2.5.4
+  path_provider: ^2.1.5
+  
+  # Utilities
+  equatable: ^2.0.8
+  logger: ^2.6.2
+  flutter_svg: ^2.2.3
+  collection: ^1.19.1
+
+
+  country_code_picker: ^3.4.1
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  
+  # Code Generation
+  build_runner: ^2.11.0
+  freezed: ^3.2.5
+  json_serializable: ^6.12.0
+  injectable_generator: ^2.12.0
+  flutter_gen_runner: ^5.12.0
+  
+  # Testing
+#  bloc_test: ^9.1.5
+
+  # Linting
+  flutter_lints: ^6.0.0
+  mockito: ^5.6.3
+
+flutter:
+  uses-material-design: true
+  generate: true
+  
+  assets:
+    - assets/
+    - assets/images/
+    - assets/images/svg/
+    - assets/images/svg/flags/
+
+
+  fonts:
+    - family: SFProRounded
+      fonts:
+        - asset: assets/fonts/sf_pro_rounded/SF-Pro-Rounded-Bold.otf
+          weight: 700
+        - asset: assets/fonts/sf_pro_rounded/SF-Pro-Rounded-Semibold.otf
+          weight: 600
+        - asset: assets/fonts/sf_pro_rounded/SF-Pro-Rounded-Medium.otf
+          weight: 500
+        - asset: assets/fonts/sf_pro_rounded/SF-Pro-Rounded-Regular.otf
+          weight: 400
+
+
+flutter_gen:
+  output: lib/core/assets/
+  line_length: 80
+
+  integrations:
+    flutter_svg: true
+
+  assets:
+    outputs:
+      class_name: Assets
+
+  fonts:
+    outputs:
+      class_name: FontFamily

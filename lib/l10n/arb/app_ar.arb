@@ -1,0 +1,40 @@
+{
+  "@@locale": "ar",
+  "appTitle": "كلين بويلربلايت",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+  "login": "تسجيل الدخول",
+  "logout": "تسجيل الخروج",
+  "email": "البريد الإلكتروني",
+  "password": "كلمة المرور",
+  "welcomeBack": "مرحباً بعودتك!",
+  "errorOccurred": "حدث خطأ",
+  "tryAgain": "حاول مرة أخرى",
+  "settings": "الإعدادات",
+  "theme": "النمط",
+  "darkMode": "الوضع الداكن",
+  "enabled": "مفعّل",
+  "disabled": "معطّل",
+  "pleaseEnterEmail": "الرجاء إدخال بريدك الإلكتروني",
+  "pleaseEnterPassword": "الرجاء إدخال كلمة المرور",
+  "welcome": "مرحباً {name}!",
+  "@welcome": {
+    "description": "Welcome message with user name",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "John"
+      }
+    }
+  },
+  "language": "اللغة",
+  "selectLanguage": "اختر اللغة",
+  "english": "English",
+  "bangla": "বাংলা",
+  "arabic": "العربية",
+  "validation_is_required": "مطلوب",
+  "validation_invalid_email": "يرجى إدخال عنوان بريد إلكتروني صالح",
+  "validation_password_min_length": "يجب أن تتكون كلمة المرور من 6 أحرف على الأقل",
+  "validation_invalid_phone": "يرجى إدخال رقم هاتف صالح"
+}

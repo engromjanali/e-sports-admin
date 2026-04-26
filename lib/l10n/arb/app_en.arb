@@ -1,0 +1,40 @@
+{
+  "@@locale": "en",
+  "appTitle": "Clean Boilerplate",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+  "login": "Login",
+  "logout": "Logout",
+  "email": "Email",
+  "password": "Password",
+  "welcomeBack": "Welcome Back!",
+  "errorOccurred": "An error occurred",
+  "tryAgain": "Try Again",
+  "settings": "Settings",
+  "theme": "Theme",
+  "darkMode": "Dark Mode",
+  "enabled": "Enabled",
+  "disabled": "Disabled",
+  "pleaseEnterEmail": "Please enter your email",
+  "pleaseEnterPassword": "Please enter your password",
+  "welcome": "Welcome {name}!",
+  "@welcome": {
+    "description": "Welcome message with user name",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "John"
+      }
+    }
+  },
+  "language": "Language",
+  "selectLanguage": "Select Language",
+  "english": "English",
+  "bangla": "বাংলা",
+  "arabic": "العربية",
+  "validation_is_required": "is required",
+  "validation_invalid_email": "Please enter a valid email address",
+  "validation_password_min_length": "Password must be at least 6 characters long",
+  "validation_invalid_phone": "Please enter a valid phone number"
+}

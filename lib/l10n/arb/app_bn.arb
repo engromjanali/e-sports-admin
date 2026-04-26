@@ -1,0 +1,40 @@
+{
+  "@@locale": "bn",
+  "appTitle": "ক্লিন বয়লারপ্লেট",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+  "login": "লগইন",
+  "logout": "লগআউট",
+  "email": "ইমেইল",
+  "password": "পাসওয়ার্ড",
+  "welcomeBack": "আবার স্বাগতম!",
+  "errorOccurred": "একটি ত্রুটি ঘটেছে",
+  "tryAgain": "আবার চেষ্টা করুন",
+  "settings": "সেটিংস",
+  "theme": "থিম",
+  "darkMode": "ডার্ক মোড",
+  "enabled": "সক্রিয়",
+  "disabled": "নিষ্ক্রিয়",
+  "pleaseEnterEmail": "অনুগ্রহ করে আপনার ইমেইল লিখুন",
+  "pleaseEnterPassword": "অনুগ্রহ করে আপনার পাসওয়ার্ড লিখুন",
+  "welcome": "স্বাগতম {name}!",
+  "@welcome": {
+    "description": "Welcome message with user name",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "John"
+      }
+    }
+  },
+  "language": "ভাষা",
+  "selectLanguage": "ভাষা নির্বাচন করুন",
+  "english": "English",
+  "bangla": "বাংলা",
+  "arabic": "العربية",
+  "validation_is_required": "প্রয়োজন",
+  "validation_invalid_email": "একটি বৈধ ইমেইল ঠিকানা লিখুন",
+  "validation_password_min_length": "পাসওয়ার্ড অন্তত ৬ অক্ষর দীর্ঘ হতে হবে",
+  "validation_invalid_phone": "একটি বৈধ ফোন নম্বর লিখুন"
+}

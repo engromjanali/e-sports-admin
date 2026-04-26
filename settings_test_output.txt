@@ -1,0 +1,29 @@
+00:00 +0: loading /Users/mobarak/Documents/6amTech/gitHub/dayoneSoft/clean_boilerplate/test/features/settings/presentation/screens/settings_screen_test.dart                                           00:01 +0: loading /Users/mobarak/Documents/6amTech/gitHub/dayoneSoft/clean_boilerplate/test/features/settings/presentation/screens/settings_screen_test.dart                                           00:01 +0: SettingsScreen displays Language and Theme sections                                                                                                                                          00:01 +0: SettingsScreen displays Language and Theme sections                                                                                                                                          
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _TextWidgetFinder:<Found 0 widgets with text "English": []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/mobarak/Documents/6amTech/gitHub/dayoneSoft/clean_boilerplate/test/features/settings/presentation/screens/settings_screen_test.dart:75:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1059:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/mobarak/Documents/6amTech/gitHub/dayoneSoft/clean_boilerplate/test/features/settings/presentation/screens/settings_screen_test.dart line 75
+The test description was:
+  SettingsScreen displays Language and Theme sections
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +0 -1: SettingsScreen displays Language and Theme sections [E]                                                                                                                                   
+  Test failed. See exception logs above.
+  The test description was: SettingsScreen displays Language and Theme sections
+  
+
+To run this test again: /Users/mobarak/Documents/development/all/latest/bin/cache/dart-sdk/bin/dart test /Users/mobarak/Documents/6amTech/gitHub/dayoneSoft/clean_boilerplate/test/features/settings/presentation/screens/settings_screen_test.dart -p vm --plain-name 'SettingsScreen displays Language and Theme sections'
+00:01 +0 -1: Tapping Language tile opens bottom sheet                                                                                                                                                  00:01 +1 -1: Tapping Language tile opens bottom sheet                                                                                                                                                  00:01 +1 -1: Toggling Theme switch adds ChangeThemeMode event                                                                                                                                          00:01 +2 -1: Toggling Theme switch adds ChangeThemeMode event                                                                                                                                          00:01 +2 -1: Some tests failed.                                                                                                                                                                        

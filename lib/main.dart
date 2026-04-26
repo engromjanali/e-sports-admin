@@ -1,0 +1,72 @@
+import 'package:clean_boilerplate/features/settings/presentation/bloc/theme/theme_event.dart';
+import 'package:clean_boilerplate/features/splash/presentation/bloc/splash_bloc.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'config/route/app_router.dart';
+import 'config/theme/app_theme.dart';
+import 'core/di/injection.dart';
+import 'features/auth/presentation/bloc/auth_bloc.dart';
+import 'features/settings/presentation/bloc/localization/localization_bloc.dart';
+import 'features/settings/presentation/bloc/theme/theme_bloc.dart';
+import 'l10n/gen/app_localizations.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Configure dependency injection
+  await configureDependencies();
+
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiBlocProvider(
+      providers: [
+        
+        BlocProvider(
+          create: (context) => getIt<ThemeBloc>()
+            ..add(const ThemeEvent.loadThemeMode()),
+        ),
+        BlocProvider(
+          create: (context) => getIt<LocalizationBloc>()
+            ..add(const LocalizationEvent.loadLocale()),
+        ),
+        BlocProvider(
+          create: (context) => getIt<SplashBloc>()
+            ..add(const SplashEvent.getConfig()),
+        ),
+        BlocProvider(
+          create: (context) => getIt<AuthBloc>(),
+        ),
+      ],
+      child: BlocBuilder<LocalizationBloc, LocalizationState>(
+        builder: (context, localeState) {
+          return BlocBuilder<ThemeBloc, ThemeState>(
+            builder: (context, themeState) {
+              // Determine theme mode based on state value
+              final themeMode = themeState.when(
+                dark: (value) => ThemeMode.dark,
+                light: (value) => ThemeMode.light,
+              );
+
+              return MaterialApp.router(
+                debugShowCheckedModeBanner: false,
+                theme: AppTheme.light,
+                darkTheme: AppTheme.dark,
+                themeMode: themeMode,
+                locale: localeState.locale,
+                routerConfig: router,
+                localizationsDelegates: AppLocalizations.localizationsDelegates,
+                supportedLocales: AppLocalizations.supportedLocales,
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+}
