@@ -51,6 +51,7 @@ class MyApp extends StatelessWidget {
               final themeMode = themeState.when(
                 dark: (value) => ThemeMode.dark,
                 light: (value) => ThemeMode.light,
+                system: (value) => ThemeMode.system,
               );
 
               return MaterialApp.router(

@@ -19,7 +19,7 @@ class ThemeBloc extends Bloc<ThemeEvent, ThemeState> {
   ThemeBloc(
     this._getThemeModeUseCase,
     this._setThemeModeUseCase,
-  ) : super(const ThemeState.light()) {
+  ) : super(const ThemeState.system()) {
     on<ThemeEvent>(_onThemeEvent);
   }
 
@@ -43,6 +43,8 @@ class ThemeBloc extends Bloc<ThemeEvent, ThemeState> {
         // Emit appropriate state based on theme mode
         if (success.data == AppThemeMode.dark) {
           emit(const ThemeState.dark());
+        } else if (success.data == AppThemeMode.system) {
+          emit(const ThemeState.system());
         } else {
           emit(const ThemeState.light());
         }
@@ -66,6 +68,8 @@ class ThemeBloc extends Bloc<ThemeEvent, ThemeState> {
         // Emit new theme state
         if (mode == AppThemeMode.dark) {
           emit(const ThemeState.dark());
+        } else if (mode == AppThemeMode.system) {
+          emit(const ThemeState.system());
         } else {
           emit(const ThemeState.light());
         }
