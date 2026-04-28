@@ -1,4 +1,3 @@
-import 'dart:math';
 
 import 'package:clean_boilerplate/config/route/app_router.dart';
 import 'package:clean_boilerplate/core/extensions/overly_extensions.dart';
