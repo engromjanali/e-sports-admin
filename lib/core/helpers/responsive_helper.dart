@@ -19,7 +19,7 @@ class ResponsiveHelper {
 
   static bool isMobile(BuildContext context) {
     final screenWidth = context.screenWidth;
-    if (screenWidth < 650 || !kIsWeb) {
+    if (screenWidth < 650) {
       return true;
     } else {
       return false;
@@ -28,7 +28,25 @@ class ResponsiveHelper {
 
   static bool isTab(BuildContext context) {
     final screenWidth = context.screenWidth;
-    if (screenWidth < 1100 && screenWidth >= 650) {
+    if (screenWidth < 1100 && screenWidth >= 600) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  static bool isSmallTab(BuildContext context) {
+    final screenWidth = context.screenWidth;
+    if (screenWidth < 850 && screenWidth >= 600) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  static bool isBigTab(BuildContext context) {
+    final screenWidth = context.screenWidth;
+    if (screenWidth < 1100 && screenWidth >= 850) {
       return true;
     } else {
       return false;
