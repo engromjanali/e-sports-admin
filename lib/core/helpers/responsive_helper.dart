@@ -19,7 +19,25 @@ class ResponsiveHelper {
 
   static bool isMobile(BuildContext context) {
     final screenWidth = context.screenWidth;
-    if (screenWidth < 650) {
+    if (screenWidth <= 650) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  static bool isSmallMobile(BuildContext context) {
+    final screenWidth = context.screenWidth;
+    if (screenWidth <= 420) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  static bool isBigMobile(BuildContext context) {
+    final screenWidth = context.screenWidth;
+    if (screenWidth > 420 && screenWidth <= 650) {
       return true;
     } else {
       return false;
@@ -28,7 +46,7 @@ class ResponsiveHelper {
 
   static bool isTab(BuildContext context) {
     final screenWidth = context.screenWidth;
-    if (screenWidth < 1100 && screenWidth >= 600) {
+    if (screenWidth <= 1100 && screenWidth > 600) {
       return true;
     } else {
       return false;
@@ -37,7 +55,7 @@ class ResponsiveHelper {
 
   static bool isSmallTab(BuildContext context) {
     final screenWidth = context.screenWidth;
-    if (screenWidth < 850 && screenWidth >= 600) {
+    if (screenWidth <= 850 && screenWidth > 600) {
       return true;
     } else {
       return false;
@@ -46,7 +64,7 @@ class ResponsiveHelper {
 
   static bool isBigTab(BuildContext context) {
     final screenWidth = context.screenWidth;
-    if (screenWidth < 1100 && screenWidth >= 850) {
+    if (screenWidth <= 1100 && screenWidth > 850) {
       return true;
     } else {
       return false;
@@ -55,7 +73,7 @@ class ResponsiveHelper {
 
   static bool isDesktop(BuildContext context) {
     final screenWidth = context.screenWidth;
-    if (screenWidth >= 1100) {
+    if (screenWidth > 1100) {
       return true;
     } else {
       return false;
