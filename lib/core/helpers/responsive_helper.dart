@@ -1,3 +1,4 @@
+import 'package:clean_boilerplate/config/util/dimensions.dart';
 import 'package:clean_boilerplate/core/extensions/screen_matres_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -8,7 +9,7 @@ class ResponsiveHelper {
   static const double _smallMobile = 420;
   static const double _mobile = 650;
   static const double _smallTab = 850;
-  static const double _tab = 1100;
+  static const double _tab = Dimensions.webMaxWidth - 100;
 
   static bool isMobilePhone() => !kIsWeb;
   static bool isWeb() => kIsWeb;
