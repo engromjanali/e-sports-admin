@@ -8,10 +8,7 @@ import 'package:clean_boilerplate/features/auth/data/models/user_model.dart';
 /// - AuthLocalDataSourceImpl: Handles local storage (future implementation)
 abstract class AuthDataSource {
   /// Authenticate user with email and password
-  Future<UserModel> login({
-    required String email,
-    required String password,
-  });
+  Future<UserModel> login({required String email, required String password,});
 
   /// Log out the current user
   Future<void> logout();
