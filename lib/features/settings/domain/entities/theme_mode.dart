@@ -5,6 +5,9 @@ enum AppThemeMode {
 
   /// Dark theme
   dark,
+
+  /// System theme
+  system,
 }
 
 /// Extension methods for AppThemeMode
@@ -16,6 +19,8 @@ extension AppThemeModeExtension on AppThemeMode {
         return 'light';
       case AppThemeMode.dark:
         return 'dark';
+      case AppThemeMode.system:
+        return 'system';
     }
   }
 
@@ -26,6 +31,8 @@ extension AppThemeModeExtension on AppThemeMode {
         return 'Light';
       case AppThemeMode.dark:
         return 'Dark';
+      case AppThemeMode.system:
+        return 'System';
     }
   }
 }
@@ -37,6 +44,8 @@ extension StringToAppThemeMode on String {
     switch (toLowerCase()) {
       case 'dark':
         return AppThemeMode.dark;
+      case 'system':
+        return AppThemeMode.system;
       case 'light':
       default:
         return AppThemeMode.light;

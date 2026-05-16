@@ -43,4 +43,7 @@ class Dimensions {
   static const double buttonHeightSmall = 36.0;
   static const double buttonHeightDefault = 48.0;
   static const double buttonHeightLarge = 56.0;
+
+  // Web max width
+  static const double webMaxWidth = 1200.0;
 }

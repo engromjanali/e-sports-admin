@@ -1,4 +1,5 @@
 import 'package:clean_boilerplate/config/util/app_constants.dart';
+import 'package:clean_boilerplate/core/methods/printer.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
@@ -147,8 +148,8 @@ class ApiClient {
   }) async {
     try {
       if (kDebugMode) {
-        print('=====> POST: $path');
-        print('=====> Body: $data');
+        printer('=====> POST: $path');
+        printer('=====> Body: $data');
       }
 
       final response = await _dio.post<T>(
