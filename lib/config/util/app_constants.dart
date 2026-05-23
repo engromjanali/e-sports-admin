@@ -21,7 +21,7 @@ class AppConstants {
   static const String profileEndpoint = '/user/profile';
 
   // business setup
-    static const String businessSetupUri = 'api/admin/business-setup';
+  static const String businessSetupUri = 'api/admin/business-setup';
 
 
 
@@ -29,6 +29,7 @@ class AppConstants {
   static const String tokenKey = 'auth_token';
   static const String guestUserIdKey = 'guest_user_id';
   static const String languageCodeKey = 'language_code';
+  static const String defaultLanguageCode = 'en';
 
   // Pagination
   static const int paginationLimit = 20;

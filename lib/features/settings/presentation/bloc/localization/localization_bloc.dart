@@ -24,7 +24,7 @@ class LocalizationBloc extends Bloc<LocalizationEvent, LocalizationState> {
     this._getLocaleUseCase,
     this._setLocaleUseCase,
     this._updateApiLocaleUseCase,
-  ) : super(LocalizationState.initial(Locale(AppConstants.languages.first.code))) {
+  ) : super(LocalizationState.initial(Locale(AppConstants.defaultLanguageCode))) {
     on<LocalizationEvent>(_onLocalizationEvent);
   }
 
@@ -49,8 +49,8 @@ class LocalizationBloc extends Bloc<LocalizationEvent, LocalizationState> {
         emit(LocalizationState.loaded(locale));
       },
       failure: (_) {
-        // On error, use first language from list as default
-        emit(LocalizationState.initial(Locale(AppConstants.languages.first.code)));
+        // On error, use default language
+        emit(LocalizationState.initial(Locale(AppConstants.defaultLanguageCode)));
       },
     );
   }
