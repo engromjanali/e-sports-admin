@@ -1,4 +1,5 @@
 import 'package:clean_boilerplate/features/splash/presentation/screens/splash_screeen.dart';
+import 'package:clean_boilerplate/features/business_setup/presentation/screens/business_setup_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
@@ -18,6 +19,7 @@ class AppRoutes {
   static const String _init = '/';
   static const String _profile = '/profile';
   static const String settings = '/settings';
+  static const String businessSetup = '/business-setup';
   
   // Helper methods for parameterized routes
   static String getProfileRoute({required String userId}) => '$_profile?userId=$userId';
@@ -29,7 +31,7 @@ class AppRoutes {
 
 /// Router configuration using go_router
 final router = GoRouter(
-  initialLocation: AppRoutes._splash,
+  initialLocation: AppRoutes.businessSetup,
   routes: [
 
     GoRoute(
@@ -61,6 +63,12 @@ final router = GoRouter(
       path: AppRoutes.settings,
       name: 'settings',
       builder: (context, state) => const SettingsScreen(),
+    ),
+
+    GoRoute(
+      path: AppRoutes.businessSetup,
+      name: 'businessSetup',
+      builder: (context, state) => const BusinessSetupScreen(),
     ),
     
     // Add more routes as your app grows

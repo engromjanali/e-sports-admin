@@ -9,15 +9,21 @@ class AppConstants {
   static const String appVersion = '1.0.0';
 
   // API constants (Update with your actual API URLs)
-  static const String baseUrl = 'https://efood-admin.6amtech.com';
+  static const String baseUrl = 'https://foatball.vercel.app';
 
-  // API endpoints
+  // ------------------ API endpoints-------------
+  // auth
   static const String configEndPoint = '/api/v1/config';
   static const String loginEndpoint = '/auth/login';
   static const String registerEndpoint = '/auth/register';
   static const String logoutEndpoint = '/auth/logout';
   static const String refreshTokenEndpoint = '/auth/refresh';
   static const String profileEndpoint = '/user/profile';
+
+  // business setup
+    static const String businessSetupUri = 'api/admin/business-setup';
+
+
 
 
   static const String tokenKey = 'auth_token';
