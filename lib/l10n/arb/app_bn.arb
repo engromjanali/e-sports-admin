@@ -43,5 +43,9 @@
   "version": "ভার্সন",
   "enterVersion": "ভার্সন লিখুন",
   "userSetup": "ইউজার সেটআপ",
-  "verifyEmail": "ইমেইল যাচাই"
+  "verifyEmail": "ইমেইল যাচাই",
+  "player": "প্লেয়ার",
+  "pendingPlayer": "পেন্ডিং প্লেয়ার",
+  "approvedPlayer": "অনুমোদিত প্লেয়ার",
+  "suspendedPlayer": "সাসপেন্ডেড প্লেয়ার"
 }

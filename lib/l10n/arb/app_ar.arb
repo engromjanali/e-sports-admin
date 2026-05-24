@@ -43,5 +43,9 @@
   "version": "الإصدار",
   "enterVersion": "أدخل الإصدار",
   "userSetup": "إعداد المستخدم",
-  "verifyEmail": "التحقق من البريد الإلكتروني"
+  "verifyEmail": "التحقق من البريد الإلكتروني",
+  "player": "اللاعب",
+  "pendingPlayer": "لاعب معلق",
+  "approvedPlayer": "لاعب معتمد",
+  "suspendedPlayer": "لاعب موقوف"
 }

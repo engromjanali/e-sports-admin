@@ -1,9 +1,10 @@
+import 'package:clean_boilerplate/features/match/screen.dart';
 import 'package:clean_boilerplate/features/splash/presentation/screens/splash_screeen.dart';
 import 'package:clean_boilerplate/features/business_setup/presentation/screens/business_setup_screen.dart';
+import 'package:clean_boilerplate/features/auth/presentation/screens/login_screen.dart';
+import 'package:clean_boilerplate/features/settings/presentation/screens/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../features/auth/presentation/screens/login_screen.dart';
-import '../../features/settings/presentation/screens/settings_screen.dart';
 
 /// App route constants
 class AppRoutes {
@@ -13,13 +14,15 @@ class AppRoutes {
   // Authentication routes
   static const String _splash = '/splash';
   static const String _login = '/login';
-  static const String _register = '/register';
   
   // Main routes
   static const String _init = '/';
   static const String _profile = '/profile';
   static const String settings = '/settings';
   static const String businessSetup = '/business-setup';
+  static const String pendingPlayer = '/player/pending';
+  static const String approvedPlayer = '/player/approved';
+  static const String suspendedPlayer = '/player/suspended';
   
   // Helper methods for parameterized routes
   static String getProfileRoute({required String userId}) => '$_profile?userId=$userId';
@@ -69,6 +72,24 @@ final router = GoRouter(
       path: AppRoutes.businessSetup,
       name: 'businessSetup',
       builder: (context, state) => const BusinessSetupScreen(),
+    ),
+
+    GoRoute(
+      path: AppRoutes.pendingPlayer,
+      name: 'pendingPlayer',
+      builder: (context, state) => const PlayerStatusScreen(statusType: PlayerStatusType.pending),
+    ),
+
+    GoRoute(
+      path: AppRoutes.approvedPlayer,
+      name: 'approvedPlayer',
+      builder: (context, state) => const PlayerStatusScreen(statusType: PlayerStatusType.approved),
+    ),
+
+    GoRoute(
+      path: AppRoutes.suspendedPlayer,
+      name: 'suspendedPlayer',
+      builder: (context, state) => const PlayerStatusScreen(statusType: PlayerStatusType.suspended),
     ),
     
     // Add more routes as your app grows

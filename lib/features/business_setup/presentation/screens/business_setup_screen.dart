@@ -1,6 +1,7 @@
 import 'package:clean_boilerplate/config/util/dimensions.dart';
 import 'package:clean_boilerplate/config/util/styles.dart';
 import 'package:clean_boilerplate/core/extensions/context_extensions.dart';
+import 'package:clean_boilerplate/core/widgets/app_menu_drawer.dart';
 import 'package:clean_boilerplate/core/widgets/common_labeled_input_item_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -28,6 +29,7 @@ class _BusinessSetupScreenState extends State<BusinessSetupScreen> {
       appBar: AppBar(
         title: Text(context.local.businessSetup),
       ),
+      drawer: const AppMenuDrawer(),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(Dimensions.paddingSizeLarge),

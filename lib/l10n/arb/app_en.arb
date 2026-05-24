@@ -43,5 +43,9 @@
   "version": "Version",
   "enterVersion": "Enter version",
   "userSetup": "User Setup",
-  "verifyEmail": "Verify Email"
+  "verifyEmail": "Verify Email",
+  "player": "Player",
+  "pendingPlayer": "Pending Player",
+  "approvedPlayer": "Approved Player",
+  "suspendedPlayer": "Suspended Player"
 }
