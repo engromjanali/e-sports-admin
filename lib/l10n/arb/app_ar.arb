@@ -47,5 +47,11 @@
   "player": "اللاعب",
   "pendingPlayer": "لاعب معلق",
   "approvedPlayer": "لاعب معتمد",
-  "suspendedPlayer": "لاعب موقوف"
+  "suspendedPlayer": "لاعب موقوف",
+  "sl": "م",
+  "name": "الاسم",
+  "action": "الإجراء",
+  "edit": "تعديل",
+  "suspend": "إيقاف",
+  "approve": "اعتماد"
 }

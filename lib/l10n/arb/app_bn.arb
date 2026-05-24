@@ -47,5 +47,11 @@
   "player": "প্লেয়ার",
   "pendingPlayer": "পেন্ডিং প্লেয়ার",
   "approvedPlayer": "অনুমোদিত প্লেয়ার",
-  "suspendedPlayer": "সাসপেন্ডেড প্লেয়ার"
+  "suspendedPlayer": "সাসপেন্ডেড প্লেয়ার",
+  "sl": "ক্রমিক",
+  "name": "নাম",
+  "action": "অ্যাকশন",
+  "edit": "এডিট",
+  "suspend": "সাসপেন্ড",
+  "approve": "অনুমোদন"
 }
