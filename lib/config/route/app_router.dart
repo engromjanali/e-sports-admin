@@ -1,3 +1,4 @@
+import 'package:clean_boilerplate/features/home/presentation/screens/home_screen.dart';
 import 'package:clean_boilerplate/features/match/screen.dart';
 import 'package:clean_boilerplate/features/match/domain/entities/match_entity.dart';
 import 'package:clean_boilerplate/features/match/presentation/screens/match_screen.dart';
@@ -21,6 +22,7 @@ class AppRoutes {
   static const String _login = '/login';
 
   // Main routes
+  static const String home = '/';
   static const String _init = '/';
   static const String _profile = '/profile';
   static const String settings = '/settings';
@@ -50,7 +52,7 @@ class AppRoutes {
 
 /// Router configuration using go_router
 final router = GoRouter(
-  initialLocation: AppRoutes.businessSetup,
+  initialLocation: AppRoutes._init,
   routes: [
 
     GoRoute(
@@ -70,11 +72,7 @@ final router = GoRouter(
     GoRoute(
       path: AppRoutes._init,
       name: 'home',
-      builder: (context, state) => const Scaffold(
-        body: Center(
-          child: Text('Home Screen'),
-        ),
-      ),
+      builder: (context, state) => const HomeScreen(),
     ),
 
     // Settings route

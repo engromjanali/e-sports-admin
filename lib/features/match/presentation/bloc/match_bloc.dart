@@ -139,25 +139,34 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
 
   Future<void> _onInit(InitMatchData event, Emitter<MatchState> emit) async {
     emit(state.copyWith(status: MatchListStatus.loading));
-    final seasonResult = await _getSeasons(const NoParams());
+    try {
+      final seasonResult = await _getSeasons(const NoParams());
+      final seasons = seasonResult.data;
+      if (seasonResult.isFailure || seasons == null) {
+        emit(state.copyWith(
+          status: MatchListStatus.failure,
+          errorMessage: seasonResult.error?.toString() ?? 'Failed to load seasons',
+        ));
+        return;
+      }
 
-    final seasons = seasonResult.data;
-    if (seasonResult.isFailure || seasons == null) {
+      // Avoid firstWhere(orElse:) — the runtime list is List<SeasonModel>
+      // but the closure is typed as () => SeasonEntity, causing a TypeError.
+      SeasonEntity? currentSeason;
+      for (final s in seasons) {
+        if (s.isCurrent) { currentSeason = s; break; }
+      }
+      currentSeason ??= seasons.isEmpty ? null : seasons.first;
+      final selected = currentSeason?.id;
+
+      emit(state.copyWith(seasons: seasons, selectedSeasonId: selected));
+      await _loadMatches(selected, emit);
+    } catch (e) {
       emit(state.copyWith(
         status: MatchListStatus.failure,
-        errorMessage: seasonResult.error?.toString(),
+        errorMessage: e.toString(),
       ));
-      return;
     }
-
-    final selected = seasons.isEmpty
-        ? null
-        : seasons
-            .firstWhere((s) => s.isCurrent, orElse: () => seasons.first)
-            .id;
-
-    emit(state.copyWith(seasons: seasons, selectedSeasonId: selected));
-    await _loadMatches(selected, emit);
   }
 
   Future<void> _onSelectSeason(
@@ -170,15 +179,25 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
 
   Future<void> _loadMatches(int? seasonId, Emitter<MatchState> emit) async {
     emit(state.copyWith(status: MatchListStatus.loading));
-    final result = await _getMatches(GetMatchesParams(seasonId: seasonId));
-    result.when(
-      success: (s) =>
-          emit(state.copyWith(status: MatchListStatus.success, matches: s.data)),
-      failure: (f) => emit(state.copyWith(
+    try {
+      final result = await _getMatches(GetMatchesParams(seasonId: seasonId));
+      if (result.isSuccess) {
+        emit(state.copyWith(
+          status: MatchListStatus.success,
+          matches: result.data ?? [],
+        ));
+      } else {
+        emit(state.copyWith(
+          status: MatchListStatus.failure,
+          errorMessage: result.error?.toString() ?? 'Failed to load matches',
+        ));
+      }
+    } catch (e) {
+      emit(state.copyWith(
         status: MatchListStatus.failure,
-        errorMessage: f.error.toString(),
-      )),
-    );
+        errorMessage: e.toString(),
+      ));
+    }
   }
 
   Future<void> _onCreate(
@@ -186,16 +205,20 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
     Emitter<MatchState> emit,
   ) async {
     emit(state.copyWith(isSubmitting: true, clearFeedback: true));
-    final result = await _createMatch(event.match);
-    await result.when(
-      success: (_) async {
+    try {
+      final result = await _createMatch(event.match);
+      if (result.isSuccess) {
         emit(state.copyWith(isSubmitting: false, actionMessage: 'Match created'));
         await _loadMatches(state.selectedSeasonId, emit);
-      },
-      failure: (f) async => emit(
-        state.copyWith(isSubmitting: false, actionError: f.error.toString()),
-      ),
-    );
+      } else {
+        emit(state.copyWith(
+          isSubmitting: false,
+          actionError: result.error?.toString() ?? 'Failed to create match',
+        ));
+      }
+    } catch (e) {
+      emit(state.copyWith(isSubmitting: false, actionError: e.toString()));
+    }
   }
 
   Future<void> _onUpdate(
@@ -203,30 +226,36 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
     Emitter<MatchState> emit,
   ) async {
     emit(state.copyWith(isSubmitting: true, clearFeedback: true));
-    final result = await _updateMatch(event.match);
-    await result.when(
-      success: (_) async {
+    try {
+      final result = await _updateMatch(event.match);
+      if (result.isSuccess) {
         emit(state.copyWith(isSubmitting: false, actionMessage: 'Match updated'));
         await _loadMatches(state.selectedSeasonId, emit);
-      },
-      failure: (f) async => emit(
-        state.copyWith(isSubmitting: false, actionError: f.error.toString()),
-      ),
-    );
+      } else {
+        emit(state.copyWith(
+          isSubmitting: false,
+          actionError: result.error?.toString() ?? 'Failed to update match',
+        ));
+      }
+    } catch (e) {
+      emit(state.copyWith(isSubmitting: false, actionError: e.toString()));
+    }
   }
 
   Future<void> _onDelete(
     DeleteMatchRequested event,
     Emitter<MatchState> emit,
   ) async {
-    final result = await _deleteMatch(event.id);
-    await result.when(
-      success: (_) async {
+    try {
+      final result = await _deleteMatch(event.id);
+      if (result.isSuccess) {
         emit(state.copyWith(actionMessage: 'Match deleted'));
         await _loadMatches(state.selectedSeasonId, emit);
-      },
-      failure: (f) async =>
-          emit(state.copyWith(actionError: f.error.toString())),
-    );
+      } else {
+        emit(state.copyWith(actionError: result.error?.toString() ?? 'Failed to delete match'));
+      }
+    } catch (e) {
+      emit(state.copyWith(actionError: e.toString()));
+    }
   }
 }

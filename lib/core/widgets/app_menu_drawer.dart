@@ -19,6 +19,12 @@ class AppMenuDrawer extends StatelessWidget {
           children: [
             _DrawerHeader(),
             _NavTile(
+              icon: Icons.home_rounded,
+              label: 'Home',
+              route: AppRoutes.home,
+              location: location,
+            ),
+            _NavTile(
               icon: Icons.business,
               label: context.local.businessSetup,
               route: AppRoutes.businessSetup,
