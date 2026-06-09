@@ -53,5 +53,10 @@
   "action": "অ্যাকশন",
   "edit": "এডিট",
   "suspend": "সাসপেন্ড",
-  "approve": "অনুমোদন"
+  "approve": "অনুমোদন",
+  "dataManagement": "ডেটা ম্যানেজমেন্ট",
+  "seasons": "সিজন",
+  "players": "প্লেয়ার",
+  "matches": "ম্যাচ",
+  "playerApproval": "প্লেয়ার অনুমোদন"
 }

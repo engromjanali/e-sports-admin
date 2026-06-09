@@ -35,7 +35,13 @@ dependencies:
   # Network
   dio: ^5.9.1
   pretty_dio_logger: ^1.4.0
-  
+
+  # Backend (Supabase - data + storage)
+  supabase: ^2.12.0
+
+  # Media
+  image_picker: ^1.2.1
+
   # Local Storage
   shared_preferences: ^2.5.4
   path_provider: ^2.1.5

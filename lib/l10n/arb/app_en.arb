@@ -53,5 +53,10 @@
   "action": "Action",
   "edit": "Edit",
   "suspend": "Suspend",
-  "approve": "Approve"
+  "approve": "Approve",
+  "dataManagement": "Data Management",
+  "seasons": "Seasons",
+  "players": "Players",
+  "matches": "Matches",
+  "playerApproval": "Player Approval"
 }

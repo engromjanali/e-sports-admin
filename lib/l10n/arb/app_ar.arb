@@ -53,5 +53,10 @@
   "action": "الإجراء",
   "edit": "تعديل",
   "suspend": "إيقاف",
-  "approve": "اعتماد"
+  "approve": "اعتماد",
+  "dataManagement": "إدارة البيانات",
+  "seasons": "المواسم",
+  "players": "اللاعبون",
+  "matches": "المباريات",
+  "playerApproval": "موافقة اللاعبين"
 }

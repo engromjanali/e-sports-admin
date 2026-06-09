@@ -1,4 +1,6 @@
 import 'package:clean_boilerplate/config/route/app_router.dart';
+import 'package:clean_boilerplate/config/util/dimensions.dart';
+import 'package:clean_boilerplate/config/util/styles.dart';
 import 'package:clean_boilerplate/core/extensions/context_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -15,60 +17,161 @@ class AppMenuDrawer extends StatelessWidget {
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
-            ListTile(
-              leading: const Icon(Icons.business),
-              title: Text(context.local.businessSetup),
-              selected: location == AppRoutes.businessSetup,
-              onTap: () {
-                context.pop();
-                if (location != AppRoutes.businessSetup) {
-                  context.go(AppRoutes.businessSetup);
-                }
-              },
+            _DrawerHeader(),
+            _NavTile(
+              icon: Icons.business,
+              label: context.local.businessSetup,
+              route: AppRoutes.businessSetup,
+              location: location,
             ),
+            _SectionLabel(label: context.local.dataManagement),
+            _NavTile(
+              icon: Icons.event,
+              label: context.local.seasons,
+              route: AppRoutes.seasons,
+              location: location,
+            ),
+            _NavTile(
+              icon: Icons.groups,
+              label: context.local.players,
+              route: AppRoutes.players,
+              location: location,
+            ),
+            _NavTile(
+              icon: Icons.sports_soccer,
+              label: context.local.matches,
+              route: AppRoutes.matches,
+              location: location,
+            ),
+            const Divider(),
             ExpansionTile(
-              leading: const Icon(Icons.groups),
-              title: Text(context.local.player),
-              initiallyExpanded: location == AppRoutes.pendingPlayer || location == AppRoutes.approvedPlayer || location == AppRoutes.suspendedPlayer,
+              leading: const Icon(Icons.how_to_reg),
+              title: Text(context.local.playerApproval),
+              initiallyExpanded: location == AppRoutes.pendingPlayer ||
+                  location == AppRoutes.approvedPlayer ||
+                  location == AppRoutes.suspendedPlayer,
               children: [
-                ListTile(
-                  contentPadding: const EdgeInsetsDirectional.only(start: 72, end: 16),
-                  title: Text(context.local.pendingPlayer),
-                  selected: location == AppRoutes.pendingPlayer,
-                  onTap: () {
-                    context.pop();
-                    if (location != AppRoutes.pendingPlayer) {
-                      context.go(AppRoutes.pendingPlayer);
-                    }
-                  },
+                _SubNavTile(
+                  label: context.local.pendingPlayer,
+                  route: AppRoutes.pendingPlayer,
+                  location: location,
                 ),
-                ListTile(
-                  contentPadding: const EdgeInsetsDirectional.only(start: 72, end: 16),
-                  title: Text(context.local.approvedPlayer),
-                  selected: location == AppRoutes.approvedPlayer,
-                  onTap: () {
-                    context.pop();
-                    if (location != AppRoutes.approvedPlayer) {
-                      context.go(AppRoutes.approvedPlayer);
-                    }
-                  },
+                _SubNavTile(
+                  label: context.local.approvedPlayer,
+                  route: AppRoutes.approvedPlayer,
+                  location: location,
                 ),
-                ListTile(
-                  contentPadding: const EdgeInsetsDirectional.only(start: 72, end: 16),
-                  title: Text(context.local.suspendedPlayer),
-                  selected: location == AppRoutes.suspendedPlayer,
-                  onTap: () {
-                    context.pop();
-                    if (location != AppRoutes.suspendedPlayer) {
-                      context.go(AppRoutes.suspendedPlayer);
-                    }
-                  },
+                _SubNavTile(
+                  label: context.local.suspendedPlayer,
+                  route: AppRoutes.suspendedPlayer,
+                  location: location,
                 ),
               ],
             ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class _DrawerHeader extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(Dimensions.paddingSizeLarge),
+      color: context.primaryColor.withValues(alpha: 0.08),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.shield_outlined,
+              size: Dimensions.iconSizeLarge, color: context.primaryColor),
+          const SizedBox(height: Dimensions.paddingSizeSmall),
+          Text(
+            'ELITS FC Admin',
+            style: AppTextStyles.sfProRoundedSemiBold
+                .copyWith(fontSize: Dimensions.fontSizeLarge),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SectionLabel extends StatelessWidget {
+  final String label;
+  const _SectionLabel({required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(
+        Dimensions.paddingSizeLarge,
+        Dimensions.paddingSizeLarge,
+        Dimensions.paddingSizeLarge,
+        Dimensions.paddingSizeSmall,
+      ),
+      child: Text(
+        label.toUpperCase(),
+        style: AppTextStyles.sfProRoundedSemiBold.copyWith(
+          fontSize: Dimensions.fontSizeExtraSmall,
+          color: context.textTheme.bodySmall?.color,
+          letterSpacing: 0.6,
+        ),
+      ),
+    );
+  }
+}
+
+class _NavTile extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String route;
+  final String location;
+
+  const _NavTile({
+    required this.icon,
+    required this.label,
+    required this.route,
+    required this.location,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: Icon(icon),
+      title: Text(label),
+      selected: location == route,
+      onTap: () {
+        context.pop();
+        if (location != route) context.go(route);
+      },
+    );
+  }
+}
+
+class _SubNavTile extends StatelessWidget {
+  final String label;
+  final String route;
+  final String location;
+
+  const _SubNavTile({
+    required this.label,
+    required this.route,
+    required this.location,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      contentPadding: const EdgeInsetsDirectional.only(start: 72, end: 16),
+      title: Text(label),
+      selected: location == route,
+      onTap: () {
+        context.pop();
+        if (location != route) context.go(route);
+      },
     );
   }
 }

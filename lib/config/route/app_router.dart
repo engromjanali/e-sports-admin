@@ -1,4 +1,9 @@
 import 'package:clean_boilerplate/features/match/screen.dart';
+import 'package:clean_boilerplate/features/match/domain/entities/match_entity.dart';
+import 'package:clean_boilerplate/features/match/presentation/screens/match_screen.dart';
+import 'package:clean_boilerplate/features/match_entry/presentation/screens/match_entry_screen.dart';
+import 'package:clean_boilerplate/features/player/presentation/screens/player_screen.dart';
+import 'package:clean_boilerplate/features/season/presentation/screens/season_screen.dart';
 import 'package:clean_boilerplate/features/splash/presentation/screens/splash_screeen.dart';
 import 'package:clean_boilerplate/features/business_setup/presentation/screens/business_setup_screen.dart';
 import 'package:clean_boilerplate/features/auth/presentation/screens/login_screen.dart';
@@ -10,26 +15,37 @@ import 'package:go_router/go_router.dart';
 class AppRoutes {
   // Private constructor to prevent instantiation
   AppRoutes._();
-  
+
   // Authentication routes
   static const String _splash = '/splash';
   static const String _login = '/login';
-  
+
   // Main routes
   static const String _init = '/';
   static const String _profile = '/profile';
   static const String settings = '/settings';
   static const String businessSetup = '/business-setup';
+
+  // Data management routes
+  static const String seasons = '/seasons';
+  static const String players = '/players';
+  static const String matches = '/matches';
+  static const String matchEntries = '/matches/:matchId/entries';
+
+  // Player approval (placeholder workflow)
   static const String pendingPlayer = '/player/pending';
   static const String approvedPlayer = '/player/approved';
   static const String suspendedPlayer = '/player/suspended';
-  
+
   // Helper methods for parameterized routes
   static String getProfileRoute({required String userId}) => '$_profile?userId=$userId';
 
   static String getSplashRoute() => _splash;
 
   static String getLoginRoute() => _login;
+
+  static String getMatchEntriesRoute(String matchId) =>
+      '/matches/$matchId/entries';
 }
 
 /// Router configuration using go_router
@@ -49,7 +65,7 @@ final router = GoRouter(
       name: 'login',
       builder: (context, state) => const LoginScreen(),
     ),
-    
+
     // Home route
     GoRoute(
       path: AppRoutes._init,
@@ -60,7 +76,7 @@ final router = GoRouter(
         ),
       ),
     ),
-    
+
     // Settings route
     GoRoute(
       path: AppRoutes.settings,
@@ -72,6 +88,37 @@ final router = GoRouter(
       path: AppRoutes.businessSetup,
       name: 'businessSetup',
       builder: (context, state) => const BusinessSetupScreen(),
+    ),
+
+    // Data management
+    GoRoute(
+      path: AppRoutes.seasons,
+      name: 'seasons',
+      builder: (context, state) => const SeasonScreen(),
+    ),
+
+    GoRoute(
+      path: AppRoutes.players,
+      name: 'players',
+      builder: (context, state) => const PlayerScreen(),
+    ),
+
+    GoRoute(
+      path: AppRoutes.matches,
+      name: 'matches',
+      builder: (context, state) => const MatchScreen(),
+    ),
+
+    GoRoute(
+      path: AppRoutes.matchEntries,
+      name: 'matchEntries',
+      builder: (context, state) {
+        final matchId = state.pathParameters['matchId'] ?? '';
+        final match = state.extra is MatchEntity
+            ? state.extra as MatchEntity
+            : null;
+        return MatchEntryScreen(matchId: matchId, match: match);
+      },
     ),
 
     GoRoute(
@@ -91,10 +138,10 @@ final router = GoRouter(
       name: 'suspendedPlayer',
       builder: (context, state) => const PlayerStatusScreen(statusType: PlayerStatusType.suspended),
     ),
-    
+
     // Add more routes as your app grows
   ],
-  
+
   // Error handling
   errorBuilder: (context, state) => Scaffold(
     body: Center(

@@ -11,6 +11,27 @@ class AppConstants {
   // API constants (Update with your actual API URLs)
   static const String baseUrl = 'https://foatball.vercel.app';
 
+  // ------------------ Supabase ------------------
+  // Direct Supabase client is used for all admin data entry + storage.
+  static const String supabaseUrl = 'https://wrfsbsxigcaapvjityjv.supabase.co';
+  static const String supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndyZnNic3hpZ2NhYXB2aml0eWp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0NTkzMDcsImV4cCI6MjA5NjAzNTMwN30.Otfr-3Kho9SKl0MjNL0NNAQFJwISPSJtz7az4tV-HCA';
+
+  // Supabase storage bucket used for admin uploads (player photos, news images).
+  // NOTE: create a public bucket with this name in the Supabase dashboard.
+  static const String storageBucket = 'media';
+  static const String playersImageFolder = 'players';
+  static const String newsImageFolder = 'news';
+
+  // ------------------ Supabase tables ------------------
+  static const String tableSeason = 'season';
+  static const String tablePlayers = 'players';
+  static const String tableMatches = 'matches';
+  static const String tableMatchEntries = 'match_entries';
+  static const String tablePlayerSeasonStats = 'player_season_stats';
+  static const String tableAwards = 'awards';
+  static const String tableNews = 'news';
+  static const String tableAppSettings = 'app_settings';
+
   // ------------------ API endpoints-------------
   // auth
   static const String configEndPoint = '/api/v1/config';
