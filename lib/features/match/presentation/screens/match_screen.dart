@@ -310,7 +310,7 @@ class _StatusChip extends StatelessWidget {
 
   Color _color(BuildContext context) {
     switch (status) {
-      case 'completed':
+      case 'finished':
         return context.customThemeColors.successColor;
       case 'cancelled':
         return context.errorColor;

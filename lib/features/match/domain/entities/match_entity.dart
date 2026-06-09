@@ -4,7 +4,7 @@ import 'package:equatable/equatable.dart';
 const List<String> kMatchStatuses = [
   'upcoming',
   'live',
-  'completed',
+  'finished',
   'cancelled',
 ];
 
