@@ -8,6 +8,7 @@ class MatchModel extends MatchEntity {
     required super.awayTeam,
     required super.date,
     required super.status,
+    super.seasonName,
     super.competitionId,
     super.competitionName,
     super.homeScore,
@@ -16,9 +17,11 @@ class MatchModel extends MatchEntity {
 
   factory MatchModel.fromJson(Map<String, dynamic> json) {
     final comp = json['competitions'] as Map<String, dynamic>?;
+    final season = json['season'] as Map<String, dynamic>?;
     return MatchModel(
       id: json['id']?.toString() ?? '',
       seasonId: (json['season_id'] as num?)?.toInt() ?? 0,
+      seasonName: season?['name']?.toString(),
       homeTeam: json['hometeam']?.toString() ?? '',
       awayTeam: json['awayteam']?.toString() ?? '',
       homeScore: (json['homescore'] as num?)?.toInt(),

@@ -12,6 +12,7 @@ const List<String> kMatchStatuses = [
 class MatchEntity extends Equatable {
   final String id;
   final int seasonId;
+  final String? seasonName;
   final String homeTeam;
   final String awayTeam;
   final int? homeScore;
@@ -28,6 +29,7 @@ class MatchEntity extends Equatable {
     required this.awayTeam,
     required this.date,
     required this.status,
+    this.seasonName,
     this.competitionId,
     this.competitionName,
     this.homeScore,
@@ -43,6 +45,7 @@ class MatchEntity extends Equatable {
   List<Object?> get props => [
         id,
         seasonId,
+        seasonName,
         homeTeam,
         awayTeam,
         homeScore,
