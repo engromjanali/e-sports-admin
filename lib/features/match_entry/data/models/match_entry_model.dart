@@ -13,6 +13,7 @@ class MatchEntryModel extends MatchEntryEntity {
     super.result,
     super.notes,
     super.source,
+    super.seasonId,
     super.playerName,
     super.playerImageUrl,
     super.jerseyNumber,
@@ -33,6 +34,7 @@ class MatchEntryModel extends MatchEntryEntity {
       result: json['result']?.toString() ?? 'draw',
       notes: json['notes']?.toString() ?? '',
       source: json['source']?.toString() ?? 'manual',
+      seasonId: (json['season_id'] as num?)?.toInt(),
       playerName: player?['name']?.toString(),
       playerImageUrl: player?['profileimageurl']?.toString(),
       jerseyNumber: (player?['jerseynumber'] as num?)?.toInt(),
@@ -52,6 +54,7 @@ class MatchEntryModel extends MatchEntryEntity {
       'result': result,
       'notes': notes,
       'source': source,
+      if (seasonId != null) 'season_id': seasonId,
     };
   }
 }

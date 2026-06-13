@@ -21,7 +21,7 @@ class MatchRepositoryImpl implements MatchRepository {
         homeScore: e.homeScore,
         awayScore: e.awayScore,
         date: e.date,
-        competition: e.competition,
+        competitionId: e.competitionId,
         status: e.status,
       );
 

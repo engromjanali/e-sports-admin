@@ -6,6 +6,7 @@ import 'package:clean_boilerplate/core/extensions/overly_extensions.dart';
 import 'package:clean_boilerplate/core/widgets/app_primary_button.dart';
 import 'package:clean_boilerplate/core/widgets/common_labeled_dropdown_widget.dart';
 import 'package:clean_boilerplate/core/widgets/common_labeled_input_item_widget.dart';
+import 'package:clean_boilerplate/features/competition/domain/entities/competition_entity.dart';
 import 'package:clean_boilerplate/features/match/domain/entities/match_entity.dart';
 import 'package:clean_boilerplate/features/season/domain/entities/season_entity.dart';
 import 'package:flutter/material.dart';
@@ -14,10 +15,12 @@ import 'package:flutter/material.dart';
 class MatchFormSheet extends StatefulWidget {
   final MatchEntity? match;
   final List<SeasonEntity> seasons;
+  final List<CompetitionEntity> competitions;
   final int? defaultSeasonId;
 
   const MatchFormSheet({
     required this.seasons,
+    required this.competitions,
     super.key,
     this.match,
     this.defaultSeasonId,
@@ -31,11 +34,12 @@ class _MatchFormSheetState extends State<MatchFormSheet> {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _homeController;
   late final TextEditingController _awayController;
-  late final TextEditingController _competitionController;
   late final TextEditingController _homeScoreController;
   late final TextEditingController _awayScoreController;
 
   int? _seasonId;
+  String? _competition;
+  int? _competitionId;
   String _status = 'upcoming';
   String _date = '';
 
@@ -47,23 +51,29 @@ class _MatchFormSheetState extends State<MatchFormSheet> {
     final m = widget.match;
     _homeController = TextEditingController(text: m?.homeTeam ?? 'The Elits');
     _awayController = TextEditingController(text: m?.awayTeam ?? '');
-    _competitionController =
-        TextEditingController(text: m?.competition ?? '');
     _homeScoreController =
         TextEditingController(text: m?.homeScore?.toString() ?? '');
     _awayScoreController =
         TextEditingController(text: m?.awayScore?.toString() ?? '');
-    _seasonId = m?.seasonId ?? widget.defaultSeasonId ??
+    _seasonId = m?.seasonId ??
+        widget.defaultSeasonId ??
         (widget.seasons.isNotEmpty ? widget.seasons.first.id : null);
     _status = m?.status ?? 'upcoming';
     _date = m?.date ?? '';
+    // Pre-select competition from existing FK id or name (join result).
+    final existingId = m?.competitionId;
+    final existingName = m?.competitionName ?? '';
+    final matched = widget.competitions.where(
+      (c) => (existingId != null && c.id == existingId) || c.name == existingName,
+    ).firstOrNull;
+    _competition = matched?.name;
+    _competitionId = matched?.id ?? existingId;
   }
 
   @override
   void dispose() {
     _homeController.dispose();
     _awayController.dispose();
-    _competitionController.dispose();
     _homeScoreController.dispose();
     _awayScoreController.dispose();
     super.dispose();
@@ -98,7 +108,7 @@ class _MatchFormSheetState extends State<MatchFormSheet> {
       homeScore: _homeScoreController.text.trim().toIntOrNull,
       awayScore: _awayScoreController.text.trim().toIntOrNull,
       date: _date,
-      competition: _competitionController.text.trim(),
+      competitionId: _competitionId,
       status: _status,
     );
     Navigator.of(context).pop(entity);
@@ -167,14 +177,24 @@ class _MatchFormSheetState extends State<MatchFormSheet> {
                 ),
               ),
               const SizedBox(height: Dimensions.spaceDefault),
-              CommonLabeledInputItemWidget(
+              CommonLabeledDropdownWidget<String>(
                 label: 'Competition',
-                hintText: 'e.g. Premier League',
-                controller: _competitionController,
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: Dimensions.paddingSizeDefault,
-                  vertical: Dimensions.paddingSizeDefault,
-                ),
+                hintText: 'Select competition',
+                value: _competition,
+                items: widget.competitions
+                    .where((c) => c.isActive)
+                    .map((c) => DropdownMenuItem(
+                          value: c.name,
+                          child: Text(c.name),
+                        ))
+                    .toList(),
+                onChanged: (v) {
+                  final picked = widget.competitions.where((c) => c.name == v).firstOrNull;
+                  setState(() {
+                    _competition = picked?.name;
+                    _competitionId = picked?.id;
+                  });
+                },
               ),
               const SizedBox(height: Dimensions.spaceDefault),
               Row(

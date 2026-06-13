@@ -42,6 +42,7 @@ class _MatchView extends StatelessWidget {
       child: MatchFormSheet(
         match: match,
         seasons: state.seasons,
+        competitions: state.competitions,
         defaultSeasonId: state.selectedSeasonId,
       ),
       backgroundColor: context.theme.scaffoldBackgroundColor,
@@ -268,7 +269,7 @@ class _MatchCard extends StatelessWidget {
                 Flexible(
                   child: Text(
                     [
-                      if (match.competition.isNotEmpty) match.competition,
+                      if ((match.competitionName ?? '').isNotEmpty) match.competitionName!,
                       if (match.date.isNotEmpty) match.date,
                     ].join('  •  '),
                     style: AppTextStyles.sfProRoundedRegular.copyWith(

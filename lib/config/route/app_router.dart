@@ -1,3 +1,6 @@
+import 'package:clean_boilerplate/features/competition/presentation/screens/competition_screen.dart';
+import 'package:clean_boilerplate/features/faq/presentation/screens/faq_screen.dart';
+import 'package:clean_boilerplate/features/tags/presentation/screens/tags_screen.dart';
 import 'package:clean_boilerplate/features/home/presentation/screens/home_screen.dart';
 import 'package:clean_boilerplate/features/match/screen.dart';
 import 'package:clean_boilerplate/features/match/domain/entities/match_entity.dart';
@@ -33,6 +36,9 @@ class AppRoutes {
   static const String players = '/players';
   static const String matches = '/matches';
   static const String matchEntries = '/matches/:matchId/entries';
+  static const String faqs = '/faqs';
+  static const String competitions = '/competitions';
+  static const String tags = '/tags';
 
   // Player approval (placeholder workflow)
   static const String pendingPlayer = '/player/pending';
@@ -102,9 +108,27 @@ final router = GoRouter(
     ),
 
     GoRoute(
+      path: AppRoutes.tags,
+      name: 'tags',
+      builder: (context, state) => const TagsScreen(),
+    ),
+
+    GoRoute(
       path: AppRoutes.matches,
       name: 'matches',
       builder: (context, state) => const MatchScreen(),
+    ),
+
+    GoRoute(
+      path: AppRoutes.faqs,
+      name: 'faqs',
+      builder: (context, state) => const FaqScreen(),
+    ),
+
+    GoRoute(
+      path: AppRoutes.competitions,
+      name: 'competitions',
+      builder: (context, state) => const CompetitionScreen(),
     ),
 
     GoRoute(

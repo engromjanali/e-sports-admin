@@ -20,6 +20,8 @@ class MatchEntryEntity extends Equatable {
   final String notes;
   final String source;
 
+  final int? seasonId;
+
   final String? playerName;
   final String? playerImageUrl;
   final int? jerseyNumber;
@@ -36,6 +38,7 @@ class MatchEntryEntity extends Equatable {
     this.result = 'draw',
     this.notes = '',
     this.source = 'manual',
+    this.seasonId,
     this.playerName,
     this.playerImageUrl,
     this.jerseyNumber,
@@ -54,6 +57,7 @@ class MatchEntryEntity extends Equatable {
         result,
         notes,
         source,
+        seasonId,
         playerName,
         playerImageUrl,
         jerseyNumber,

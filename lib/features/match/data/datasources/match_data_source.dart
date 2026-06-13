@@ -22,7 +22,7 @@ class MatchRemoteDataSource implements MatchDataSource {
 
   @override
   Future<List<MatchModel>> getMatches({int? seasonId}) async {
-    final filter = _table.select();
+    final filter = _table.select('*, competitions(name)');
     final query =
         seasonId != null ? filter.eq('season_id', seasonId) : filter;
     final data = await query.order('date', ascending: false);

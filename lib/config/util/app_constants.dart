@@ -13,8 +13,8 @@ class AppConstants {
 
   // ------------------ Supabase ------------------
   // Direct Supabase client is used for all admin data entry + storage.
-  static const String supabaseUrl = 'https://wrfsbsxigcaapvjityjv.supabase.co';
-  static const String supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndyZnNic3hpZ2NhYXB2aml0eWp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0NTkzMDcsImV4cCI6MjA5NjAzNTMwN30.Otfr-3Kho9SKl0MjNL0NNAQFJwISPSJtz7az4tV-HCA';
+  static const String supabaseUrl = 'https://ttietyuwaamuiziwzmst.supabase.co';
+  static const String supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0aWV0eXV3YWFtdWl6aXd6bXN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzNjYyNzIsImV4cCI6MjA5Njk0MjI3Mn0.9fDKu8rn7edXyPu1LpGuP2M7ocM6gkD1KiHTTZHKWYs';
 
   // Supabase storage bucket used for admin uploads (player photos, news images).
   // NOTE: create a public bucket with this name in the Supabase dashboard.
@@ -31,6 +31,8 @@ class AppConstants {
   static const String tableAwards = 'awards';
   static const String tableNews = 'news';
   static const String tableAppSettings = 'app_settings';
+  static const String tableFaqs = 'faqs';
+  static const String tableCompetitions = 'competitions';
 
   // ------------------ API endpoints-------------
   // auth

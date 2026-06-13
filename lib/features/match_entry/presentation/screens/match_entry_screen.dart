@@ -7,6 +7,7 @@ import 'package:clean_boilerplate/core/extensions/overly_extensions.dart';
 import 'package:clean_boilerplate/core/helpers/responsive_helper.dart';
 import 'package:clean_boilerplate/core/widgets/admin_state_views.dart';
 import 'package:clean_boilerplate/features/match/domain/entities/match_entity.dart';
+import 'package:clean_boilerplate/features/match_entry/data/models/match_entry_model.dart';
 import 'package:clean_boilerplate/features/match_entry/domain/entities/match_entry_entity.dart';
 import 'package:clean_boilerplate/features/match_entry/presentation/bloc/match_entry_bloc.dart';
 import 'package:clean_boilerplate/features/match_entry/presentation/widgets/match_entry_form_sheet.dart';
@@ -60,7 +61,21 @@ class _MatchEntryView extends StatelessWidget {
       backgroundColor: context.theme.scaffoldBackgroundColor,
     );
     if (result == null) return;
-    bloc.add(UpsertMatchEntryRequested(result));
+    final withSeason = MatchEntryModel(
+      id: result.id,
+      playerId: result.playerId,
+      matchId: result.matchId,
+      goals: result.goals,
+      goalsConceded: result.goalsConceded,
+      hattricks: result.hattricks,
+      cleanSheet: result.cleanSheet,
+      motm: result.motm,
+      result: result.result,
+      notes: result.notes,
+      source: result.source,
+      seasonId: match?.seasonId,
+    );
+    bloc.add(UpsertMatchEntryRequested(withSeason));
   }
 
   Future<void> _confirmDelete(
@@ -206,7 +221,7 @@ class _MatchHeader extends StatelessWidget {
           Text(
             [
               match.scoreLine,
-              if (match.competition.isNotEmpty) match.competition,
+              if ((match.competitionName ?? '').isNotEmpty) match.competitionName!,
               if (match.date.isNotEmpty) match.date,
             ].join('  •  '),
             style: AppTextStyles.sfProRoundedRegular.copyWith(

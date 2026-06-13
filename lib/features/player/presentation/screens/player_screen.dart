@@ -9,8 +9,10 @@ import 'package:clean_boilerplate/core/widgets/app_menu_drawer.dart';
 import 'package:clean_boilerplate/features/player/domain/entities/player_entity.dart';
 import 'package:clean_boilerplate/features/player/presentation/bloc/player_bloc.dart';
 import 'package:clean_boilerplate/features/player/presentation/widgets/player_form_sheet.dart';
+import 'package:clean_boilerplate/features/tags/data/datasources/tags_data_source.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:supabase/supabase.dart';
 
 class PlayerScreen extends StatelessWidget {
   const PlayerScreen({super.key});
@@ -29,8 +31,28 @@ class _PlayerView extends StatelessWidget {
 
   Future<void> _openForm(BuildContext context, {PlayerEntity? player}) async {
     final bloc = context.read<PlayerBloc>();
+
+    final ds = TagsDataSource(getIt<SupabaseClient>());
+    var availableRoles = <String>[];
+    var availableTags = <String>[];
+    try {
+      final results = await Future.wait([
+        ds.getRoles(),
+        ds.getCustomTags(),
+      ]);
+      availableRoles = results[0].map((e) => e.name).toList();
+      availableTags = results[1].map((e) => e.name).toList();
+    } catch (_) {
+      // proceed with empty lists
+    }
+
+    if (!context.mounted) return;
     final result = await context.showCustomBottomSheet<PlayerEntity>(
-      child: PlayerFormSheet(player: player),
+      child: PlayerFormSheet(
+        player: player,
+        availableRoles: availableRoles,
+        availableTags: availableTags,
+      ),
       backgroundColor: context.theme.scaffoldBackgroundColor,
     );
     if (result == null) return;

@@ -3,6 +3,8 @@ import 'package:equatable/equatable.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/usecase/usecase.dart';
+import '../../../competition/domain/entities/competition_entity.dart';
+import '../../../competition/domain/usecases/competition_usecases.dart';
 import '../../../season/domain/entities/season_entity.dart';
 import '../../../season/domain/usecases/season_usecases.dart';
 import '../../domain/entities/match_entity.dart';
@@ -59,6 +61,7 @@ class MatchState extends Equatable {
   final List<SeasonEntity> seasons;
   final int? selectedSeasonId;
   final List<MatchEntity> matches;
+  final List<CompetitionEntity> competitions;
   final String? errorMessage;
   final bool isSubmitting;
   final String? actionMessage;
@@ -69,6 +72,7 @@ class MatchState extends Equatable {
     this.seasons = const [],
     this.selectedSeasonId,
     this.matches = const [],
+    this.competitions = const [],
     this.errorMessage,
     this.isSubmitting = false,
     this.actionMessage,
@@ -80,6 +84,7 @@ class MatchState extends Equatable {
     List<SeasonEntity>? seasons,
     int? selectedSeasonId,
     List<MatchEntity>? matches,
+    List<CompetitionEntity>? competitions,
     String? errorMessage,
     bool? isSubmitting,
     String? actionMessage,
@@ -91,6 +96,7 @@ class MatchState extends Equatable {
       seasons: seasons ?? this.seasons,
       selectedSeasonId: selectedSeasonId ?? this.selectedSeasonId,
       matches: matches ?? this.matches,
+      competitions: competitions ?? this.competitions,
       errorMessage: errorMessage ?? this.errorMessage,
       isSubmitting: isSubmitting ?? this.isSubmitting,
       actionMessage: clearFeedback ? null : (actionMessage ?? this.actionMessage),
@@ -104,6 +110,7 @@ class MatchState extends Equatable {
         seasons,
         selectedSeasonId,
         matches,
+        competitions,
         errorMessage,
         isSubmitting,
         actionMessage,
@@ -119,6 +126,7 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
   final CreateMatchUseCase _createMatch;
   final UpdateMatchUseCase _updateMatch;
   final DeleteMatchUseCase _deleteMatch;
+  final GetCompetitionsUseCase _getCompetitions;
 
   MatchBloc(
     this._getSeasons,
@@ -126,6 +134,7 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
     this._createMatch,
     this._updateMatch,
     this._deleteMatch,
+    this._getCompetitions,
   ) : super(const MatchState()) {
     on<InitMatchData>(_onInit);
     on<SelectMatchSeason>(_onSelectSeason);
@@ -140,8 +149,15 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
   Future<void> _onInit(InitMatchData event, Emitter<MatchState> emit) async {
     emit(state.copyWith(status: MatchListStatus.loading));
     try {
-      final seasonResult = await _getSeasons(const NoParams());
-      final seasons = seasonResult.data;
+      final results = await Future.wait([
+        _getSeasons(const NoParams()),
+        _getCompetitions(const NoParams()),
+      ]);
+
+      final seasonResult = results[0];
+      final competitionResult = results[1];
+
+      final seasons = seasonResult.data as List<SeasonEntity>?;
       if (seasonResult.isFailure || seasons == null) {
         emit(state.copyWith(
           status: MatchListStatus.failure,
@@ -149,6 +165,11 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
         ));
         return;
       }
+
+      final competitions = (competitionResult.isSuccess
+              ? competitionResult.data as List<CompetitionEntity>?
+              : null) ??
+          const [];
 
       // Avoid firstWhere(orElse:) — the runtime list is List<SeasonModel>
       // but the closure is typed as () => SeasonEntity, causing a TypeError.
@@ -159,7 +180,11 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
       currentSeason ??= seasons.isEmpty ? null : seasons.first;
       final selected = currentSeason?.id;
 
-      emit(state.copyWith(seasons: seasons, selectedSeasonId: selected));
+      emit(state.copyWith(
+        seasons: seasons,
+        competitions: competitions,
+        selectedSeasonId: selected,
+      ));
       await _loadMatches(selected, emit);
     } catch (e) {
       emit(state.copyWith(

@@ -18,26 +18,27 @@ class PlayerModel extends PlayerEntity {
       sortName: json['sort_name'] as String?,
       profileImageUrl: json['profileimageurl'] as String?,
       jerseyNumber: (json['jerseynumber'] as num?)?.toInt(),
-      playerRoles: (json['playerroles'] as List?)
-              ?.map((e) => e.toString())
-              .toList() ??
-          const [],
-      customTags: (json['customtags'] as List?)
-              ?.map((e) => e.toString())
-              .toList() ??
-          const [],
+      playerRoles: _extractNames(json['player_player_roles'], 'player_role'),
+      customTags: _extractNames(json['player_custom_tags'], 'custom_tags'),
     );
   }
 
-  /// Map used for inserts/updates (`id`/`createdat` are DB-managed).
+  static List<String> _extractNames(dynamic list, String key) {
+    if (list is! List) return const [];
+    return list
+        .map((item) =>
+            (item[key] as Map<String, dynamic>?)?['name']?.toString() ?? '')
+        .where((n) => n.isNotEmpty)
+        .toList();
+  }
+
+  /// Map used for inserts/updates — roles/tags are managed via junction tables.
   Map<String, dynamic> toWriteMap() {
     return {
       'name': name,
       'sort_name': sortName,
       'profileimageurl': profileImageUrl,
       'jerseynumber': jerseyNumber,
-      'playerroles': playerRoles,
-      'customtags': customTags,
     };
   }
 }

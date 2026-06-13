@@ -17,7 +17,8 @@ class MatchEntity extends Equatable {
   final int? homeScore;
   final int? awayScore;
   final String date;
-  final String competition;
+  final int? competitionId;
+  final String? competitionName;
   final String status;
 
   const MatchEntity({
@@ -26,8 +27,9 @@ class MatchEntity extends Equatable {
     required this.homeTeam,
     required this.awayTeam,
     required this.date,
-    required this.competition,
     required this.status,
+    this.competitionId,
+    this.competitionName,
     this.homeScore,
     this.awayScore,
   });
@@ -46,7 +48,8 @@ class MatchEntity extends Equatable {
         homeScore,
         awayScore,
         date,
-        competition,
+        competitionId,
+        competitionName,
         status,
       ];
 }

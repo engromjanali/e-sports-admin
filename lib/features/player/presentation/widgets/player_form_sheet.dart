@@ -11,8 +11,15 @@ import 'package:flutter/material.dart';
 /// Bottom sheet form for creating/editing a player. Pops a [PlayerEntity].
 class PlayerFormSheet extends StatefulWidget {
   final PlayerEntity? player;
+  final List<String> availableRoles;
+  final List<String> availableTags;
 
-  const PlayerFormSheet({super.key, this.player});
+  const PlayerFormSheet({
+    super.key,
+    this.player,
+    this.availableRoles = const [],
+    this.availableTags = const [],
+  });
 
   @override
   State<PlayerFormSheet> createState() => _PlayerFormSheetState();
@@ -141,18 +148,21 @@ class _PlayerFormSheetState extends State<PlayerFormSheet> {
                 ],
               ),
               const SizedBox(height: Dimensions.spaceDefault),
-              _ChipsInput(
+              _TagSelector(
                 label: 'Roles',
-                hint: 'e.g. Striker, Captain',
-                values: _roles,
+                emptyHint: 'No roles found. Add them in Tag Management first.',
+                availableOptions: widget.availableRoles,
+                selected: _roles,
                 onChanged: (v) => setState(() => _roles = v),
               ),
               const SizedBox(height: Dimensions.spaceDefault),
-              _ChipsInput(
-                label: 'Tags',
-                hint: 'e.g. Academy, Loan',
-                values: _tags,
+              _TagSelector(
+                label: 'Custom Tags',
+                emptyHint: 'No custom tags found. Add them in Tag Management first.',
+                availableOptions: widget.availableTags,
+                selected: _tags,
                 onChanged: (v) => setState(() => _tags = v),
+                selectedColor: const Color(0xFFFFD700),
               ),
               const SizedBox(height: Dimensions.spaceLarge),
               AppPrimaryButton(
@@ -168,94 +178,87 @@ class _PlayerFormSheetState extends State<PlayerFormSheet> {
   }
 }
 
-class _ChipsInput extends StatefulWidget {
-  final String label;
-  final String hint;
-  final List<String> values;
-  final ValueChanged<List<String>> onChanged;
+// ── Multi-select chip picker ──────────────────────────────────────────────────
 
-  const _ChipsInput({
+class _TagSelector extends StatelessWidget {
+  final String label;
+  final String emptyHint;
+  final List<String> availableOptions;
+  final List<String> selected;
+  final ValueChanged<List<String>> onChanged;
+  final Color? selectedColor;
+
+  const _TagSelector({
     required this.label,
-    required this.hint,
-    required this.values,
+    required this.emptyHint,
+    required this.availableOptions,
+    required this.selected,
     required this.onChanged,
+    this.selectedColor,
   });
 
   @override
-  State<_ChipsInput> createState() => _ChipsInputState();
-}
-
-class _ChipsInputState extends State<_ChipsInput> {
-  final _controller = TextEditingController();
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  void _add() {
-    final text = _controller.text.trim();
-    if (text.isEmpty || widget.values.contains(text)) {
-      _controller.clear();
-      return;
-    }
-    widget.onChanged([...widget.values, text]);
-    _controller.clear();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final accent = selectedColor ?? context.primaryColor;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(widget.label, style: AppTextStyles.sfProRoundedMedium),
+        Text(label, style: AppTextStyles.sfProRoundedMedium),
         const SizedBox(height: Dimensions.paddingSizeSmall),
-        Row(
-          children: [
-            Expanded(
-              child: TextField(
-                controller: _controller,
-                onSubmitted: (_) => _add(),
-                style: AppTextStyles.sfProRoundedRegular
-                    .copyWith(fontSize: Dimensions.fontSizeDefault),
-                decoration: InputDecoration(
-                  hintText: widget.hint,
-                  filled: true,
-                  fillColor: Theme.of(context).cardColor,
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: Dimensions.paddingSizeDefault,
-                    vertical: Dimensions.paddingSizeDefault,
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(Dimensions.radiusSmall),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(Dimensions.radiusSmall),
-                    borderSide: BorderSide(
-                        color: context.customThemeColors.borderColor),
+        if (availableOptions.isEmpty)
+          Text(
+            emptyHint,
+            style: AppTextStyles.sfProRoundedRegular.copyWith(
+              fontSize: Dimensions.fontSizeSmall,
+              color: context.textTheme.bodySmall?.color,
+            ),
+          )
+        else
+          Wrap(
+            spacing: Dimensions.paddingSizeSmall,
+            runSpacing: Dimensions.paddingSizeSmall,
+            children: availableOptions.map((option) {
+              final isSelected = selected.contains(option);
+              return FilterChip(
+                label: Text(
+                  option,
+                  style: TextStyle(
+                    color: isSelected ? accent : null,
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                   ),
                 ),
-              ),
-            ),
-            const SizedBox(width: Dimensions.paddingSizeSmall),
-            IconButton.filledTonal(
-              onPressed: _add,
-              icon: const Icon(Icons.add),
-            ),
-          ],
-        ),
-        if (widget.values.isNotEmpty) ...[
+                selected: isSelected,
+                selectedColor: accent.withValues(alpha: 0.15),
+                checkmarkColor: accent,
+                side: BorderSide(
+                  color: isSelected
+                      ? accent.withValues(alpha: 0.6)
+                      : context.customThemeColors.borderColor,
+                ),
+                onSelected: (val) {
+                  final updated = List<String>.from(selected);
+                  if (val) {
+                    updated.add(option);
+                  } else {
+                    updated.remove(option);
+                  }
+                  onChanged(updated);
+                },
+              );
+            }).toList(),
+          ),
+        if (selected.isNotEmpty && availableOptions.isEmpty) ...[
           const SizedBox(height: Dimensions.paddingSizeSmall),
           Wrap(
             spacing: Dimensions.paddingSizeSmall,
             runSpacing: Dimensions.paddingSizeSmall,
-            children: widget.values
+            children: selected
                 .map(
                   (v) => Chip(
                     label: Text(v),
-                    onDeleted: () => widget
-                        .onChanged(widget.values.where((e) => e != v).toList()),
+                    onDeleted: () => onChanged(
+                        selected.where((e) => e != v).toList()),
                   ),
                 )
                 .toList(),

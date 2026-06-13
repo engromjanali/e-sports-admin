@@ -3,37 +3,63 @@ import 'package:clean_boilerplate/config/util/dimensions.dart';
 import 'package:clean_boilerplate/config/util/styles.dart';
 import 'package:clean_boilerplate/core/extensions/context_extensions.dart';
 import 'package:clean_boilerplate/core/widgets/app_menu_drawer.dart';
+import 'package:clean_boilerplate/features/settings/domain/entities/theme_mode.dart';
+import 'package:clean_boilerplate/features/settings/presentation/bloc/theme/theme_bloc.dart';
+import 'package:clean_boilerplate/features/settings/presentation/bloc/theme/theme_event.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
+  static const double _contentMaxWidth = 1000.0;
+
+  static int _columns(double width) {
+    if (width >= 900) return 4;
+    if (width >= 600) return 3;
+    return 2;
+  }
+
+  static double _hPad(double width) {
+    final excess = width - _contentMaxWidth;
+    return excess > 0 ? excess / 2 : Dimensions.paddingSizeLarge;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    final hPad = _hPad(screenWidth);
+    final columns = _columns(screenWidth);
+
     return Scaffold(
       drawer: const AppMenuDrawer(),
       body: CustomScrollView(
         slivers: [
           _HomeHeader(),
           SliverPadding(
-            padding: const EdgeInsets.fromLTRB(
+            padding: EdgeInsets.fromLTRB(
+              hPad,
               Dimensions.paddingSizeLarge,
-              Dimensions.paddingSizeLarge,
-              Dimensions.paddingSizeLarge,
-              0,
+              hPad,
+              Dimensions.paddingSizeSmall,
             ),
-            sliver: SliverToBoxAdapter(
+            sliver: const SliverToBoxAdapter(
               child: _SectionTitle('Quick Access'),
             ),
           ),
           SliverPadding(
-            padding: const EdgeInsets.all(Dimensions.paddingSizeLarge),
+            padding: EdgeInsets.fromLTRB(
+              hPad,
+              Dimensions.paddingSizeSmall,
+              hPad,
+              Dimensions.paddingSizeLarge,
+            ),
             sliver: SliverGrid.count(
-              crossAxisCount: 2,
+              crossAxisCount: columns,
               mainAxisSpacing: Dimensions.paddingSizeLarge,
               crossAxisSpacing: Dimensions.paddingSizeLarge,
-              childAspectRatio: 1.1,
+              childAspectRatio: 1.15,
               children: const [
                 _NavCard(
                   icon: Icons.sports_soccer_rounded,
@@ -63,25 +89,46 @@ class HomeScreen extends StatelessWidget {
                   route: AppRoutes.businessSetup,
                   gradient: [Color(0xFF6A1B9A), Color(0xFFBA68C8)],
                 ),
+                _NavCard(
+                  icon: Icons.emoji_events_rounded,
+                  label: 'Competitions',
+                  subtitle: 'Manage competitions',
+                  route: AppRoutes.competitions,
+                  gradient: [Color(0xFF00695C), Color(0xFF4DB6AC)],
+                ),
+                _NavCard(
+                  icon: Icons.help_outline_rounded,
+                  label: 'FAQs',
+                  subtitle: 'Manage FAQ content',
+                  route: AppRoutes.faqs,
+                  gradient: [Color(0xFF37474F), Color(0xFF78909C)],
+                ),
+                _NavCard(
+                  icon: Icons.label_rounded,
+                  label: 'Tags',
+                  subtitle: 'Roles & custom tags',
+                  route: AppRoutes.tags,
+                  gradient: [Color(0xFF880E4F), Color(0xFFE91E63)],
+                ),
               ],
             ),
           ),
           SliverPadding(
-            padding: const EdgeInsets.fromLTRB(
-              Dimensions.paddingSizeLarge,
+            padding: EdgeInsets.fromLTRB(
+              hPad,
               0,
-              Dimensions.paddingSizeLarge,
+              hPad,
               Dimensions.paddingSizeSmall,
             ),
-            sliver: SliverToBoxAdapter(
+            sliver: const SliverToBoxAdapter(
               child: _SectionTitle('Player Approval'),
             ),
           ),
           SliverPadding(
-            padding: const EdgeInsets.fromLTRB(
-              Dimensions.paddingSizeLarge,
-              0,
-              Dimensions.paddingSizeLarge,
+            padding: EdgeInsets.fromLTRB(
+              hPad,
+              Dimensions.paddingSizeSmall,
+              hPad,
               Dimensions.paddingSizeExtraLarge32 * 2,
             ),
             sliver: SliverList(
@@ -132,7 +179,6 @@ class _HomeHeader extends StatelessWidget {
         background: Stack(
           fit: StackFit.expand,
           children: [
-            // Gradient background
             Container(
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
@@ -142,7 +188,6 @@ class _HomeHeader extends StatelessWidget {
                 ),
               ),
             ),
-            // Decorative circles
             Positioned(
               top: -40,
               right: -40,
@@ -167,7 +212,6 @@ class _HomeHeader extends StatelessWidget {
                 ),
               ),
             ),
-            // Content
             Positioned(
               left: Dimensions.paddingSizeLarge,
               right: Dimensions.paddingSizeLarge,
@@ -230,6 +274,26 @@ class _HomeHeader extends StatelessWidget {
         ),
       ),
       titleSpacing: 0,
+      actions: [
+        BlocBuilder<ThemeBloc, ThemeState>(
+          builder: (context, state) {
+            final isDark = state.maybeWhen(dark: (_) => true, orElse: () => false);
+            return IconButton(
+              tooltip: isDark ? 'Switch to light mode' : 'Switch to dark mode',
+              icon: Icon(
+                isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
+                color: Colors.white,
+              ),
+              onPressed: () => context.read<ThemeBloc>().add(
+                    ThemeEvent.changeThemeMode(
+                      isDark ? AppThemeMode.light : AppThemeMode.dark,
+                    ),
+                  ),
+            );
+          },
+        ),
+        const SizedBox(width: 8),
+      ],
     );
   }
 }
@@ -308,6 +372,8 @@ class _NavCard extends StatelessWidget {
                     fontSize: Dimensions.fontSizeLarge,
                     color: Colors.white,
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 2),
                 Text(
@@ -316,6 +382,8 @@ class _NavCard extends StatelessWidget {
                     fontSize: Dimensions.fontSizeExtraSmall,
                     color: Colors.white.withValues(alpha: 0.8),
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
