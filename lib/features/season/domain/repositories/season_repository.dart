@@ -6,5 +6,4 @@ abstract class SeasonRepository {
   ResultFuture<SeasonEntity> createSeason(SeasonEntity season);
   ResultFuture<SeasonEntity> updateSeason(SeasonEntity season);
   ResultVoid deleteSeason(int id);
-  ResultVoid setCurrent(int id);
 }

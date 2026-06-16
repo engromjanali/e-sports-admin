@@ -18,7 +18,7 @@ class SeasonRepositoryImpl implements SeasonRepository {
         name: e.name,
         startDate: e.startDate,
         endDate: e.endDate,
-        isCurrent: e.isCurrent,
+        status: e.status,
       );
 
   @override
@@ -38,8 +38,4 @@ class SeasonRepositoryImpl implements SeasonRepository {
   @override
   ResultVoid deleteSeason(int id) =>
       guardSupabaseVoid(() => _dataSource.deleteSeason(id));
-
-  @override
-  ResultVoid setCurrent(int id) =>
-      guardSupabaseVoid(() => _dataSource.setCurrent(id));
 }

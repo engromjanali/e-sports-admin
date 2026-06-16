@@ -43,12 +43,3 @@ class DeleteSeasonUseCase implements UseCase<void, int> {
   @override
   ResultVoid call(int params) => _repository.deleteSeason(params);
 }
-
-@lazySingleton
-class SetCurrentSeasonUseCase implements UseCase<void, int> {
-  final SeasonRepository _repository;
-  SetCurrentSeasonUseCase(this._repository);
-
-  @override
-  ResultVoid call(int params) => _repository.setCurrent(params);
-}

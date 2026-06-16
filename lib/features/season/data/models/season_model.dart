@@ -6,7 +6,7 @@ class SeasonModel extends SeasonEntity {
     required super.startDate,
     super.name,
     super.endDate,
-    super.isCurrent,
+    super.status,
   });
 
   factory SeasonModel.fromJson(Map<String, dynamic> json) {
@@ -19,7 +19,7 @@ class SeasonModel extends SeasonEntity {
       endDate: json['end_date'] == null
           ? null
           : DateTime.tryParse(json['end_date'].toString()),
-      isCurrent: json['is_current'] as bool? ?? false,
+      status: json['status'] as bool? ?? true,
     );
   }
 
@@ -29,7 +29,7 @@ class SeasonModel extends SeasonEntity {
       'name': name,
       'start_date': startDate.toIso8601String(),
       'end_date': endDate?.toIso8601String(),
-      'is_current': isCurrent,
+      'status': status,
     };
   }
 }

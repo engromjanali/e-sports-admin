@@ -38,13 +38,6 @@ class DeleteSeasonRequested extends SeasonEvent {
   List<Object?> get props => [id];
 }
 
-class SetCurrentSeasonRequested extends SeasonEvent {
-  final int id;
-  const SetCurrentSeasonRequested(this.id);
-  @override
-  List<Object?> get props => [id];
-}
-
 class ClearSeasonFeedback extends SeasonEvent {
   const ClearSeasonFeedback();
 }
@@ -100,20 +93,17 @@ class SeasonBloc extends Bloc<SeasonEvent, SeasonState> {
   final CreateSeasonUseCase _createSeason;
   final UpdateSeasonUseCase _updateSeason;
   final DeleteSeasonUseCase _deleteSeason;
-  final SetCurrentSeasonUseCase _setCurrent;
 
   SeasonBloc(
     this._getSeasons,
     this._createSeason,
     this._updateSeason,
     this._deleteSeason,
-    this._setCurrent,
   ) : super(const SeasonState()) {
     on<LoadSeasons>(_onLoad);
     on<CreateSeasonRequested>(_onCreate);
     on<UpdateSeasonRequested>(_onUpdate);
     on<DeleteSeasonRequested>(_onDelete);
-    on<SetCurrentSeasonRequested>(_onSetCurrent);
     on<ClearSeasonFeedback>(
       (_, emit) => emit(state.copyWith(clearFeedback: true)),
     );
@@ -184,18 +174,4 @@ class SeasonBloc extends Bloc<SeasonEvent, SeasonState> {
     );
   }
 
-  Future<void> _onSetCurrent(
-    SetCurrentSeasonRequested event,
-    Emitter<SeasonState> emit,
-  ) async {
-    final result = await _setCurrent(event.id);
-    result.when(
-      success: (_) {
-        emit(state.copyWith(actionMessage: 'Current season updated'));
-        add(const LoadSeasons());
-      },
-      failure: (f) =>
-          emit(state.copyWith(actionError: f.error.toString())),
-    );
-  }
 }

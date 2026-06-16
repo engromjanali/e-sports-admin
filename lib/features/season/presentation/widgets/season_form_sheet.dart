@@ -21,7 +21,7 @@ class _SeasonFormSheetState extends State<SeasonFormSheet> {
   late final TextEditingController _nameController;
   DateTime _startDate = DateTime.now();
   DateTime? _endDate;
-  bool _isCurrent = false;
+  bool _status = true;
 
   bool get _isEditing => widget.season != null;
 
@@ -32,7 +32,7 @@ class _SeasonFormSheetState extends State<SeasonFormSheet> {
     _nameController = TextEditingController(text: s?.name ?? '');
     _startDate = s?.startDate ?? DateTime.now();
     _endDate = s?.endDate;
-    _isCurrent = s?.isCurrent ?? false;
+    _status = s?.status ?? true;
   }
 
   @override
@@ -67,7 +67,7 @@ class _SeasonFormSheetState extends State<SeasonFormSheet> {
           : _nameController.text.trim(),
       startDate: _startDate,
       endDate: _endDate,
-      isCurrent: _isCurrent,
+      status: _status,
     );
     Navigator.of(context).pop(entity);
   }
@@ -128,12 +128,17 @@ class _SeasonFormSheetState extends State<SeasonFormSheet> {
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
             title: Text(
-              'Set as current season',
+              'Active',
               style: AppTextStyles.sfProRoundedMedium
                   .copyWith(fontSize: Dimensions.fontSizeDefault),
             ),
-            value: _isCurrent,
-            onChanged: (v) => setState(() => _isCurrent = v),
+            subtitle: Text(
+              'Inactive seasons are hidden from the user app',
+              style: AppTextStyles.sfProRoundedRegular
+                  .copyWith(fontSize: Dimensions.fontSizeExtraSmall),
+            ),
+            value: _status,
+            onChanged: (v) => setState(() => _status = v),
           ),
           const SizedBox(height: Dimensions.spaceDefault),
           AppPrimaryButton(

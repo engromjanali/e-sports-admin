@@ -368,7 +368,7 @@ CREATE TABLE public.season (
   name text,
   start_date timestamp with time zone NOT NULL DEFAULT now(),
   end_date timestamp with time zone,
-  is_current boolean NOT NULL DEFAULT false,
+  status boolean NOT NULL DEFAULT true,
   CONSTRAINT season_pkey PRIMARY KEY (id)
 );
 
@@ -380,6 +380,7 @@ CREATE TABLE public.players (
   jerseynumber integer,
   createdat timestamp with time zone DEFAULT now(),
   email text UNIQUE,
+  password text DEFAULT '12345678',
   CONSTRAINT players_pkey PRIMARY KEY (id)
 );
 
@@ -615,6 +616,25 @@ SUPABASE_ANON_KEY=your-anon-public-key
 
 ---
 
+## Migrations
+
+For an **existing** database (where `players` was created before user-app login
+existed), add the `password` column and backfill the default:
+
+```sql
+ALTER TABLE public.players
+  ADD COLUMN IF NOT EXISTS password text DEFAULT '12345678';
+
+-- Backfill existing players so every account can log in
+UPDATE public.players
+SET password = '12345678'
+WHERE password IS NULL;
+```
+
+> Fresh installs don't need this — the column is already in the Step 2 schema.
+
+---
+
 ## Table Reference
 
 ### `season`
@@ -625,8 +645,10 @@ Defines competition seasons (e.g. "Season 1", "2024/25").
 | `id` | bigint (auto) | Primary key |
 | `name` | text | Season display name |
 | `start_date` | timestamptz | Season start |
-| `end_date` | timestamptz | Season end (nullable) |
-| `is_current` | boolean | Whether this is the active season |
+| `end_date` | timestamptz | Season end (nullable → ongoing) |
+| `status` | boolean | Active/inactive. Inactive seasons are hidden from the user app. |
+
+> **Current season** is NOT stored on this table — it's `app_settings.current_season_id` (set in Business Setup). The user app derives weeks/months from each season's `start_date`/`end_date`.
 
 ---
 
@@ -641,9 +663,12 @@ All registered club members.
 | `profileimageurl` | text | Avatar URL |
 | `jerseynumber` | integer | Jersey number |
 | `createdat` | timestamptz | Registration date |
-| `email` | text | Unique login email |
+| `email` | text | Unique login email (user app) |
+| `password` | text | Login password for the user app (default `12345678`) |
 
 > Roles and tags are stored in junction tables — see `player_player_roles` and `player_custom_tags` below.
+
+> **User app login:** the user app authenticates by matching `email` + `password` against this table and uses the player's `id` (UUID) as the session token. Default password for all players is `12345678`.
 
 ---
 

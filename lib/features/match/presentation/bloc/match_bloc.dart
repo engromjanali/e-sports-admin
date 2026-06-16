@@ -3,6 +3,8 @@ import 'package:equatable/equatable.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/usecase/usecase.dart';
+import '../../../business_setup/domain/entities/app_settings_entity.dart';
+import '../../../business_setup/domain/usecases/app_settings_usecases.dart';
 import '../../../competition/domain/entities/competition_entity.dart';
 import '../../../competition/domain/usecases/competition_usecases.dart';
 import '../../../season/domain/entities/season_entity.dart';
@@ -127,6 +129,7 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
   final UpdateMatchUseCase _updateMatch;
   final DeleteMatchUseCase _deleteMatch;
   final GetCompetitionsUseCase _getCompetitions;
+  final GetAppSettingsUseCase _getAppSettings;
 
   MatchBloc(
     this._getSeasons,
@@ -135,6 +138,7 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
     this._updateMatch,
     this._deleteMatch,
     this._getCompetitions,
+    this._getAppSettings,
   ) : super(const MatchState()) {
     on<InitMatchData>(_onInit);
     on<SelectMatchSeason>(_onSelectSeason);
@@ -152,10 +156,12 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
       final results = await Future.wait([
         _getSeasons(const NoParams()),
         _getCompetitions(const NoParams()),
+        _getAppSettings(const NoParams()),
       ]);
 
       final seasonResult = results[0];
       final competitionResult = results[1];
+      final settingsResult = results[2];
 
       final seasons = seasonResult.data as List<SeasonEntity>?;
       if (seasonResult.isFailure || seasons == null) {
@@ -171,11 +177,14 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
               : null) ??
           const [];
 
-      // Avoid firstWhere(orElse:) — the runtime list is List<SeasonModel>
-      // but the closure is typed as () => SeasonEntity, causing a TypeError.
+      // Current season comes from app_settings.current_season_id; fall back to
+      // the most recent season when it's unset or unavailable.
+      final currentSeasonId = settingsResult.isSuccess
+          ? (settingsResult.data as AppSettingsEntity?)?.currentSeasonId
+          : null;
       SeasonEntity? currentSeason;
       for (final s in seasons) {
-        if (s.isCurrent) { currentSeason = s; break; }
+        if (s.id == currentSeasonId) { currentSeason = s; break; }
       }
       currentSeason ??= seasons.isEmpty ? null : seasons.first;
       final selected = currentSeason?.id;

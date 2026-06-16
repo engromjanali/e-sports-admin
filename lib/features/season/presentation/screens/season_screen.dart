@@ -124,9 +124,6 @@ class _SeasonView extends StatelessWidget {
                         season: s,
                         onEdit: () => _openForm(context, season: s),
                         onDelete: () => _confirmDelete(context, s),
-                        onSetCurrent: () => context
-                            .read<SeasonBloc>()
-                            .add(SetCurrentSeasonRequested(s.id)),
                       );
                     },
                   ),
@@ -144,13 +141,11 @@ class _SeasonCard extends StatelessWidget {
   final SeasonEntity season;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
-  final VoidCallback onSetCurrent;
 
   const _SeasonCard({
     required this.season,
     required this.onEdit,
     required this.onDelete,
-    required this.onSetCurrent,
   });
 
   String _fmt(DateTime? d) => d == null
@@ -182,9 +177,9 @@ class _SeasonCard extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    if (season.isCurrent) ...[
+                    if (!season.status) ...[
                       const SizedBox(width: Dimensions.paddingSizeSmall),
-                      _CurrentBadge(),
+                      _StatusBadge(),
                     ],
                   ],
                 ),
@@ -204,19 +199,12 @@ class _SeasonCard extends StatelessWidget {
               switch (v) {
                 case 'edit':
                   onEdit();
-                case 'current':
-                  onSetCurrent();
                 case 'delete':
                   onDelete();
               }
             },
             itemBuilder: (context) => [
               const PopupMenuItem(value: 'edit', child: Text('Edit')),
-              if (!season.isCurrent)
-                const PopupMenuItem(
-                  value: 'current',
-                  child: Text('Set as current'),
-                ),
               const PopupMenuItem(value: 'delete', child: Text('Delete')),
             ],
           ),
@@ -226,7 +214,7 @@ class _SeasonCard extends StatelessWidget {
   }
 }
 
-class _CurrentBadge extends StatelessWidget {
+class _StatusBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -235,14 +223,14 @@ class _CurrentBadge extends StatelessWidget {
         vertical: 2,
       ),
       decoration: BoxDecoration(
-        color: context.primaryColor.withValues(alpha: 0.12),
+        color: context.textTheme.bodySmall?.color?.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(Dimensions.radiusSmall),
       ),
       child: Text(
-        'Current',
+        'Inactive',
         style: AppTextStyles.sfProRoundedMedium.copyWith(
           fontSize: Dimensions.fontSizeExtraSmall,
-          color: context.primaryColor,
+          color: context.textTheme.bodySmall?.color,
         ),
       ),
     );

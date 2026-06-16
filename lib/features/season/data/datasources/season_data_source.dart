@@ -9,7 +9,6 @@ abstract class SeasonDataSource {
   Future<SeasonModel> createSeason(SeasonModel season);
   Future<SeasonModel> updateSeason(int id, SeasonModel season);
   Future<void> deleteSeason(int id);
-  Future<void> setCurrent(int id);
 }
 
 @LazySingleton(as: SeasonDataSource)
@@ -48,13 +47,5 @@ class SeasonRemoteDataSource implements SeasonDataSource {
   @override
   Future<void> deleteSeason(int id) async {
     await _table.delete().eq('id', id);
-  }
-
-  @override
-  Future<void> setCurrent(int id) async {
-    // Only one season may be current (enforced by a partial unique index).
-    // Clear the existing current season first, then promote the chosen one.
-    await _table.update({'is_current': false}).eq('is_current', true);
-    await _table.update({'is_current': true}).eq('id', id);
   }
 }
