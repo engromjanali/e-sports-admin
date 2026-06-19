@@ -71,6 +71,12 @@ class AppMenuDrawer extends StatelessWidget {
               route: AppRoutes.tags,
               location: location,
             ),
+            _NavTile(
+              icon: Icons.military_tech_rounded,
+              label: 'Hall of Fame',
+              route: AppRoutes.hallOfFame,
+              location: location,
+            ),
             const Divider(),
             ExpansionTile(
               leading: const Icon(Icons.how_to_reg),

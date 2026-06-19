@@ -1,5 +1,6 @@
 import 'package:clean_boilerplate/features/competition/presentation/screens/competition_screen.dart';
 import 'package:clean_boilerplate/features/faq/presentation/screens/faq_screen.dart';
+import 'package:clean_boilerplate/features/hall_of_fame/presentation/screens/hall_of_fame_screen.dart';
 import 'package:clean_boilerplate/features/tags/presentation/screens/tags_screen.dart';
 import 'package:clean_boilerplate/features/home/presentation/screens/home_screen.dart';
 import 'package:clean_boilerplate/features/match/screen.dart';
@@ -39,6 +40,7 @@ class AppRoutes {
   static const String faqs = '/faqs';
   static const String competitions = '/competitions';
   static const String tags = '/tags';
+  static const String hallOfFame = '/hall-of-fame';
 
   // Player approval (placeholder workflow)
   static const String pendingPlayer = '/player/pending';
@@ -129,6 +131,12 @@ final router = GoRouter(
       path: AppRoutes.competitions,
       name: 'competitions',
       builder: (context, state) => const CompetitionScreen(),
+    ),
+
+    GoRoute(
+      path: AppRoutes.hallOfFame,
+      name: 'hallOfFame',
+      builder: (context, state) => const HallOfFameScreen(),
     ),
 
     GoRoute(

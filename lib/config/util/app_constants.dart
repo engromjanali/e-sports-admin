@@ -33,6 +33,7 @@ class AppConstants {
   static const String tableAppSettings = 'app_settings';
   static const String tableFaqs = 'faqs';
   static const String tableCompetitions = 'competitions';
+  static const String tableHallOfFame = 'hall_of_fame';
 
   // ------------------ API endpoints-------------
   // auth
