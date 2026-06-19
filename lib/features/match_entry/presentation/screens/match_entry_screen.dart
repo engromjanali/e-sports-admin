@@ -6,7 +6,8 @@ import 'package:clean_boilerplate/core/extensions/context_extensions.dart';
 import 'package:clean_boilerplate/core/extensions/overly_extensions.dart';
 import 'package:clean_boilerplate/core/helpers/responsive_helper.dart';
 import 'package:clean_boilerplate/core/widgets/admin_state_views.dart';
-import 'package:clean_boilerplate/features/match/domain/entities/match_entity.dart';
+import 'package:clean_boilerplate/core/widgets/app_menu_drawer.dart';
+import 'package:clean_boilerplate/core/widgets/common_labeled_dropdown_widget.dart';
 import 'package:clean_boilerplate/features/match_entry/data/models/match_entry_model.dart';
 import 'package:clean_boilerplate/features/match_entry/domain/entities/match_entry_entity.dart';
 import 'package:clean_boilerplate/features/match_entry/presentation/bloc/match_entry_bloc.dart';
@@ -14,29 +15,22 @@ import 'package:clean_boilerplate/features/match_entry/presentation/widgets/matc
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-/// Per-match data entry screen. [match] is optional context for the header;
-/// [matchId] is the source of truth for loading entries.
+/// Standalone player data-entry screen. Pick a season and a match, then record
+/// each player's stats for that match.
 class MatchEntryScreen extends StatelessWidget {
-  final String matchId;
-  final MatchEntity? match;
-
-  const MatchEntryScreen({required this.matchId, super.key, this.match});
+  const MatchEntryScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) =>
-          getIt<MatchEntryBloc>()..add(InitMatchEntries(matchId)),
-      child: _MatchEntryView(matchId: matchId, match: match),
+      create: (_) => getIt<MatchEntryBloc>()..add(const InitMatchEntryData()),
+      child: const _MatchEntryView(),
     );
   }
 }
 
 class _MatchEntryView extends StatelessWidget {
-  final String matchId;
-  final MatchEntity? match;
-
-  const _MatchEntryView({required this.matchId, this.match});
+  const _MatchEntryView();
 
   Future<void> _openForm(
     BuildContext context, {
@@ -44,17 +38,20 @@ class _MatchEntryView extends StatelessWidget {
   }) async {
     final bloc = context.read<MatchEntryBloc>();
     final state = bloc.state;
+    if (state.selectedSeasonId == null) {
+      context.showAlertSnackBar('Select a season first to record stats.');
+      return;
+    }
     if (entry == null && state.availablePlayers.isEmpty) {
       context.showAlertSnackBar(
         state.allPlayers.isEmpty
             ? 'Add players first to record stats.'
-            : 'All players already have an entry for this match.',
+            : 'All players already have an entry for this season.',
       );
       return;
     }
     final result = await context.showCustomBottomSheet<MatchEntryEntity>(
       child: MatchEntryFormSheet(
-        matchId: matchId,
         entry: entry,
         availablePlayers: state.availablePlayers,
       ),
@@ -64,7 +61,6 @@ class _MatchEntryView extends StatelessWidget {
     final withSeason = MatchEntryModel(
       id: result.id,
       playerId: result.playerId,
-      matchId: result.matchId,
       goals: result.goals,
       goalsConceded: result.goalsConceded,
       hattricks: result.hattricks,
@@ -72,8 +68,7 @@ class _MatchEntryView extends StatelessWidget {
       motm: result.motm,
       result: result.result,
       notes: result.notes,
-      source: result.source,
-      seasonId: match?.seasonId,
+      seasonId: entry?.seasonId ?? state.selectedSeasonId,
     );
     bloc.add(UpsertMatchEntryRequested(withSeason));
   }
@@ -106,9 +101,8 @@ class _MatchEntryView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(match?.title ?? 'Match Data Entry'),
-      ),
+      appBar: AppBar(title: const Text('Match Data Entry')),
+      drawer: const AppMenuDrawer(),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _openForm(context),
         icon: const Icon(Icons.person_add_alt),
@@ -129,19 +123,6 @@ class _MatchEntryView extends StatelessWidget {
             }
           },
           builder: (context, state) {
-            if (state.status == MatchEntryStatus.loading &&
-                state.entries.isEmpty) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            if (state.status == MatchEntryStatus.failure &&
-                state.entries.isEmpty) {
-              return AdminErrorView(
-                message: state.errorMessage,
-                onRetry: () =>
-                    context.read<MatchEntryBloc>().add(InitMatchEntries(matchId)),
-              );
-            }
-
             final maxWidth = ResponsiveHelper.isDesktop(context)
                 ? Dimensions.webMaxWidth
                 : double.infinity;
@@ -151,39 +132,8 @@ class _MatchEntryView extends StatelessWidget {
                 constraints: BoxConstraints(maxWidth: maxWidth),
                 child: Column(
                   children: [
-                    if (match != null) _MatchHeader(match: match!),
-                    Expanded(
-                      child: state.entries.isEmpty
-                          ? const AdminEmptyView(
-                              message:
-                                  'No entries yet. Tap "Add Entry" to record player stats.',
-                              icon: Icons.assignment_outlined,
-                            )
-                          : RefreshIndicator(
-                              onRefresh: () async => context
-                                  .read<MatchEntryBloc>()
-                                  .add(const ReloadMatchEntries()),
-                              child: ListView.separated(
-                                padding: const EdgeInsets.fromLTRB(
-                                  Dimensions.paddingSizeLarge,
-                                  Dimensions.paddingSizeDefault,
-                                  Dimensions.paddingSizeLarge,
-                                  Dimensions.paddingSizeExtraLarge32 * 2,
-                                ),
-                                itemCount: state.entries.length,
-                                separatorBuilder: (_, _) => const SizedBox(
-                                    height: Dimensions.paddingSizeDefault),
-                                itemBuilder: (context, index) {
-                                  final e = state.entries[index];
-                                  return _EntryCard(
-                                    entry: e,
-                                    onEdit: () => _openForm(context, entry: e),
-                                    onDelete: () => _confirmDelete(context, e),
-                                  );
-                                },
-                              ),
-                            ),
-                    ),
+                    _Selectors(state: state),
+                    Expanded(child: _body(context, state)),
                   ],
                 ),
               ),
@@ -193,43 +143,85 @@ class _MatchEntryView extends StatelessWidget {
       ),
     );
   }
+
+  Widget _body(BuildContext context, MatchEntryState state) {
+    if (state.status == MatchEntryStatus.failure && state.entries.isEmpty) {
+      return AdminErrorView(
+        message: state.errorMessage,
+        onRetry: () =>
+            context.read<MatchEntryBloc>().add(const InitMatchEntryData()),
+      );
+    }
+    if (state.selectedSeasonId == null) {
+      return const AdminEmptyView(
+        message: 'Select a season to manage player entries.',
+        icon: Icons.assignment_outlined,
+      );
+    }
+    if (state.status == MatchEntryStatus.loading && state.entries.isEmpty) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (state.entries.isEmpty) {
+      return const AdminEmptyView(
+        message: 'No entries yet. Tap "Add Entry" to record player stats.',
+        icon: Icons.assignment_outlined,
+      );
+    }
+    return RefreshIndicator(
+      onRefresh: () async =>
+          context.read<MatchEntryBloc>().add(const ReloadMatchEntries()),
+      child: ListView.separated(
+        padding: const EdgeInsets.fromLTRB(
+          Dimensions.paddingSizeLarge,
+          Dimensions.paddingSizeDefault,
+          Dimensions.paddingSizeLarge,
+          Dimensions.paddingSizeExtraLarge32 * 2,
+        ),
+        itemCount: state.entries.length,
+        separatorBuilder: (_, _) =>
+            const SizedBox(height: Dimensions.paddingSizeDefault),
+        itemBuilder: (context, index) {
+          final e = state.entries[index];
+          return _EntryCard(
+            entry: e,
+            onEdit: () => _openForm(context, entry: e),
+            onDelete: () => _confirmDelete(context, e),
+          );
+        },
+      ),
+    );
+  }
 }
 
-class _MatchHeader extends StatelessWidget {
-  final MatchEntity match;
-  const _MatchHeader({required this.match});
+/// Season picker that drives which entries are shown.
+class _Selectors extends StatelessWidget {
+  final MatchEntryState state;
+  const _Selectors({required this.state});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.all(Dimensions.paddingSizeLarge),
-      padding: const EdgeInsets.all(Dimensions.paddingSizeLarge),
-      decoration: BoxDecoration(
-        color: context.primaryColor.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(Dimensions.radiusLarge),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(
+        Dimensions.paddingSizeLarge,
+        Dimensions.paddingSizeLarge,
+        Dimensions.paddingSizeLarge,
+        Dimensions.paddingSizeSmall,
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            match.title,
-            style: AppTextStyles.sfProRoundedSemiBold
-                .copyWith(fontSize: Dimensions.fontSizeLarge),
-          ),
-          const SizedBox(height: Dimensions.paddingSizeExtraSmall),
-          Text(
-            [
-              match.scoreLine,
-              if ((match.competitionName ?? '').isNotEmpty) match.competitionName!,
-              if (match.date.isNotEmpty) match.date,
-            ].join('  •  '),
-            style: AppTextStyles.sfProRoundedRegular.copyWith(
-              fontSize: Dimensions.fontSizeSmall,
-              color: context.textTheme.bodySmall?.color,
-            ),
-          ),
-        ],
+      child: CommonLabeledDropdownWidget<int>(
+        label: 'Season',
+        hintText: 'Select season',
+        value: state.selectedSeasonId,
+        items: state.seasons
+            .map((s) => DropdownMenuItem(
+                  value: s.id,
+                  child: Text(s.displayName),
+                ))
+            .toList(),
+        onChanged: (v) {
+          if (v != null) {
+            context.read<MatchEntryBloc>().add(SelectEntrySeason(v));
+          }
+        },
       ),
     );
   }

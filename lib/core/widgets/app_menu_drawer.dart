@@ -54,6 +54,12 @@ class AppMenuDrawer extends StatelessWidget {
               location: location,
             ),
             _NavTile(
+              icon: Icons.assignment_rounded,
+              label: 'Match Entries',
+              route: AppRoutes.matchEntries,
+              location: location,
+            ),
+            _NavTile(
               icon: Icons.emoji_events_rounded,
               label: 'Competitions',
               route: AppRoutes.competitions,

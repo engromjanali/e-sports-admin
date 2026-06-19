@@ -18,6 +18,7 @@ class AppSettingsRepositoryImpl implements AppSettingsRepository {
         currentSeasonId: e.currentSeasonId,
         version: e.version,
         verifyEmail: e.verifyEmail,
+        userSelfRegistration: e.userSelfRegistration,
         maintenanceMode: e.maintenanceMode,
       );
 

@@ -5,6 +5,8 @@ import 'package:injectable/injectable.dart';
 import '../../../../core/usecase/usecase.dart';
 import '../../../player/domain/entities/player_entity.dart';
 import '../../../player/domain/usecases/player_usecases.dart';
+import '../../../season/domain/entities/season_entity.dart';
+import '../../../season/domain/usecases/season_usecases.dart';
 import '../../domain/entities/match_entry_entity.dart';
 import '../../domain/usecases/match_entry_usecases.dart';
 
@@ -15,11 +17,17 @@ sealed class MatchEntryEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class InitMatchEntries extends MatchEntryEvent {
-  final String matchId;
-  const InitMatchEntries(this.matchId);
+/// Standalone entry point: load players + seasons, then the entries for the
+/// first season. Entries are scoped to a season, not a match.
+class InitMatchEntryData extends MatchEntryEvent {
+  const InitMatchEntryData();
+}
+
+class SelectEntrySeason extends MatchEntryEvent {
+  final int seasonId;
+  const SelectEntrySeason(this.seasonId);
   @override
-  List<Object?> get props => [matchId];
+  List<Object?> get props => [seasonId];
 }
 
 class ReloadMatchEntries extends MatchEntryEvent {
@@ -49,7 +57,8 @@ enum MatchEntryStatus { initial, loading, success, failure }
 
 class MatchEntryState extends Equatable {
   final MatchEntryStatus status;
-  final String matchId;
+  final List<SeasonEntity> seasons;
+  final int? selectedSeasonId;
   final List<MatchEntryEntity> entries;
   final List<PlayerEntity> allPlayers;
   final String? errorMessage;
@@ -59,7 +68,8 @@ class MatchEntryState extends Equatable {
 
   const MatchEntryState({
     this.status = MatchEntryStatus.initial,
-    this.matchId = '',
+    this.seasons = const [],
+    this.selectedSeasonId,
     this.entries = const [],
     this.allPlayers = const [],
     this.errorMessage,
@@ -68,7 +78,7 @@ class MatchEntryState extends Equatable {
     this.actionError,
   });
 
-  /// Players that don't yet have an entry for this match.
+  /// Players that don't yet have an entry for the selected season.
   List<PlayerEntity> get availablePlayers {
     final usedIds = entries.map((e) => e.playerId).toSet();
     return allPlayers.where((p) => !usedIds.contains(p.id)).toList();
@@ -76,7 +86,8 @@ class MatchEntryState extends Equatable {
 
   MatchEntryState copyWith({
     MatchEntryStatus? status,
-    String? matchId,
+    List<SeasonEntity>? seasons,
+    int? selectedSeasonId,
     List<MatchEntryEntity>? entries,
     List<PlayerEntity>? allPlayers,
     String? errorMessage,
@@ -87,7 +98,8 @@ class MatchEntryState extends Equatable {
   }) {
     return MatchEntryState(
       status: status ?? this.status,
-      matchId: matchId ?? this.matchId,
+      seasons: seasons ?? this.seasons,
+      selectedSeasonId: selectedSeasonId ?? this.selectedSeasonId,
       entries: entries ?? this.entries,
       allPlayers: allPlayers ?? this.allPlayers,
       errorMessage: errorMessage ?? this.errorMessage,
@@ -100,7 +112,8 @@ class MatchEntryState extends Equatable {
   @override
   List<Object?> get props => [
         status,
-        matchId,
+        seasons,
+        selectedSeasonId,
         entries,
         allPlayers,
         errorMessage,
@@ -117,14 +130,17 @@ class MatchEntryBloc extends Bloc<MatchEntryEvent, MatchEntryState> {
   final UpsertMatchEntryUseCase _upsertEntry;
   final DeleteMatchEntryUseCase _deleteEntry;
   final GetPlayersUseCase _getPlayers;
+  final GetSeasonsUseCase _getSeasons;
 
   MatchEntryBloc(
     this._getEntries,
     this._upsertEntry,
     this._deleteEntry,
     this._getPlayers,
+    this._getSeasons,
   ) : super(const MatchEntryState()) {
-    on<InitMatchEntries>(_onInit);
+    on<InitMatchEntryData>(_onInit);
+    on<SelectEntrySeason>(_onSelectSeason);
     on<ReloadMatchEntries>((_, emit) => _loadEntries(emit));
     on<UpsertMatchEntryRequested>(_onUpsert);
     on<DeleteMatchEntryRequested>(_onDelete);
@@ -134,18 +150,38 @@ class MatchEntryBloc extends Bloc<MatchEntryEvent, MatchEntryState> {
   }
 
   Future<void> _onInit(
-    InitMatchEntries event,
+    InitMatchEntryData event,
     Emitter<MatchEntryState> emit,
   ) async {
-    emit(state.copyWith(status: MatchEntryStatus.loading, matchId: event.matchId));
+    emit(state.copyWith(status: MatchEntryStatus.loading));
+
     final playersResult = await _getPlayers(const NoParams());
-    emit(state.copyWith(allPlayers: playersResult.data ?? const []));
+    final seasonsResult = await _getSeasons(const NoParams());
+    final seasons = seasonsResult.data ?? const <SeasonEntity>[];
+    final selectedSeasonId = seasons.isNotEmpty ? seasons.first.id : null;
+
+    emit(state.copyWith(
+      seasons: seasons,
+      selectedSeasonId: selectedSeasonId,
+      allPlayers: playersResult.data ?? const [],
+    ));
+
+    await _loadEntries(emit);
+  }
+
+  Future<void> _onSelectSeason(
+    SelectEntrySeason event,
+    Emitter<MatchEntryState> emit,
+  ) async {
+    emit(state.copyWith(selectedSeasonId: event.seasonId, entries: const []));
     await _loadEntries(emit);
   }
 
   Future<void> _loadEntries(Emitter<MatchEntryState> emit) async {
+    final seasonId = state.selectedSeasonId;
+    if (seasonId == null) return;
     emit(state.copyWith(status: MatchEntryStatus.loading));
-    final result = await _getEntries(state.matchId);
+    final result = await _getEntries(seasonId);
     result.when(
       success: (s) => emit(
         state.copyWith(status: MatchEntryStatus.success, entries: s.data),

@@ -4,7 +4,7 @@ class MatchEntryModel extends MatchEntryEntity {
   const MatchEntryModel({
     required super.id,
     required super.playerId,
-    required super.matchId,
+    super.matchId,
     super.goals,
     super.goalsConceded,
     super.hattricks,
@@ -12,7 +12,6 @@ class MatchEntryModel extends MatchEntryEntity {
     super.motm,
     super.result,
     super.notes,
-    super.source,
     super.seasonId,
     super.playerName,
     super.playerImageUrl,
@@ -33,7 +32,6 @@ class MatchEntryModel extends MatchEntryEntity {
       motm: json['motm'] as bool? ?? false,
       result: json['result']?.toString() ?? 'draw',
       notes: json['notes']?.toString() ?? '',
-      source: json['source']?.toString() ?? 'manual',
       seasonId: (json['season_id'] as num?)?.toInt(),
       playerName: player?['name']?.toString(),
       playerImageUrl: player?['profileimageurl']?.toString(),
@@ -41,11 +39,11 @@ class MatchEntryModel extends MatchEntryEntity {
     );
   }
 
-  /// Map used for upserts. Display-only join fields are never written.
+  /// Columns written on insert/update. Display-only join fields and `matchid`
+  /// (entries aren't tied to a match) are never written.
   Map<String, dynamic> toWriteMap() {
     return {
       'playerid': playerId,
-      'matchid': matchId,
       'goals': goals,
       'goalsconceded': goalsConceded,
       'hattricks': hattricks,
@@ -53,7 +51,6 @@ class MatchEntryModel extends MatchEntryEntity {
       'motm': motm,
       'result': result,
       'notes': notes,
-      'source': source,
       if (seasonId != null) 'season_id': seasonId,
     };
   }

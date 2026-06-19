@@ -7,6 +7,7 @@ class AppSettingsModel extends AppSettingsEntity {
     super.version,
     super.verifyEmail,
     super.maintenanceMode,
+    super.userSelfRegistration,
   });
 
   factory AppSettingsModel.fromJson(Map<String, dynamic> json) {
@@ -16,6 +17,7 @@ class AppSettingsModel extends AppSettingsEntity {
       version: json['version'] as String?,
       verifyEmail: json['verify_email'] as bool? ?? false,
       maintenanceMode: json['maintenance_mode'] as bool? ?? false,
+      userSelfRegistration: json['user_self_registration'] as bool? ?? true,
     );
   }
 
@@ -25,6 +27,7 @@ class AppSettingsModel extends AppSettingsEntity {
       'version': version,
       'verify_email': verifyEmail,
       'maintenance_mode': maintenanceMode,
+      'user_self_registration': userSelfRegistration,
       'updated_at': DateTime.now().toIso8601String(),
     };
   }

@@ -12,12 +12,10 @@ import 'package:flutter/material.dart';
 /// Form for adding/editing a player's stat line in a match.
 /// Pops a [MatchEntryEntity].
 class MatchEntryFormSheet extends StatefulWidget {
-  final String matchId;
   final MatchEntryEntity? entry;
   final List<PlayerEntity> availablePlayers;
 
   const MatchEntryFormSheet({
-    required this.matchId,
     required this.availablePlayers,
     super.key,
     this.entry,
@@ -72,7 +70,6 @@ class _MatchEntryFormSheetState extends State<MatchEntryFormSheet> {
     final entity = MatchEntryEntity(
       id: widget.entry?.id ?? '',
       playerId: _playerId!,
-      matchId: widget.matchId,
       goals: _goalsController.text.trim().toIntOrNull ?? 0,
       goalsConceded: _concededController.text.trim().toIntOrNull ?? 0,
       hattricks: _hattricksController.text.trim().toIntOrNull ?? 0,

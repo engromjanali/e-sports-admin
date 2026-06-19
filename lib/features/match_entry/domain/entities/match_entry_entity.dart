@@ -3,7 +3,11 @@ import 'package:equatable/equatable.dart';
 /// Allowed per-player match results (matches the `match_entries.result` CHECK).
 const List<String> kMatchResults = ['win', 'draw', 'loss'];
 
-/// A single player's stat line for a match. Maps to `match_entries`.
+/// A single player's stat line for a season. Maps to `match_entries`.
+///
+/// Entries are scoped to a [seasonId] and a player — they are NOT tied to a
+/// match (`match_entries` has no relation to the `matches` table). [matchId] is
+/// kept only to preserve any value on legacy rows; it is never required.
 ///
 /// [playerName], [playerImageUrl] and [jerseyNumber] are read-only display
 /// fields populated from the joined `players` row.
@@ -18,7 +22,6 @@ class MatchEntryEntity extends Equatable {
   final bool motm;
   final String result;
   final String notes;
-  final String source;
 
   final int? seasonId;
 
@@ -29,7 +32,7 @@ class MatchEntryEntity extends Equatable {
   const MatchEntryEntity({
     required this.id,
     required this.playerId,
-    required this.matchId,
+    this.matchId = '',
     this.goals = 0,
     this.goalsConceded = 0,
     this.hattricks = 0,
@@ -37,7 +40,6 @@ class MatchEntryEntity extends Equatable {
     this.motm = false,
     this.result = 'draw',
     this.notes = '',
-    this.source = 'manual',
     this.seasonId,
     this.playerName,
     this.playerImageUrl,
@@ -56,7 +58,6 @@ class MatchEntryEntity extends Equatable {
         motm,
         result,
         notes,
-        source,
         seasonId,
         playerName,
         playerImageUrl,

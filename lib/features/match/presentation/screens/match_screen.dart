@@ -1,4 +1,3 @@
-import 'package:clean_boilerplate/config/route/app_router.dart';
 import 'package:clean_boilerplate/config/util/dimensions.dart';
 import 'package:clean_boilerplate/config/util/styles.dart';
 import 'package:clean_boilerplate/core/di/injection.dart';
@@ -14,7 +13,6 @@ import 'package:clean_boilerplate/features/match/presentation/bloc/match_bloc.da
 import 'package:clean_boilerplate/features/match/presentation/widgets/match_form_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
 class MatchScreen extends StatelessWidget {
   const MatchScreen({super.key});
@@ -186,10 +184,6 @@ class _MatchView extends StatelessWidget {
           final m = state.matches[index];
           return _MatchCard(
             match: m,
-            onEnterData: () => context.push(
-              AppRoutes.getMatchEntriesRoute(m.id),
-              extra: m,
-            ),
             onEdit: () => _openForm(context, match: m),
             onDelete: () => _confirmDelete(context, m),
           );
@@ -201,105 +195,81 @@ class _MatchView extends StatelessWidget {
 
 class _MatchCard extends StatelessWidget {
   final MatchEntity match;
-  final VoidCallback onEnterData;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
 
   const _MatchCard({
     required this.match,
-    required this.onEnterData,
     required this.onEdit,
     required this.onDelete,
   });
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onEnterData,
-      borderRadius: BorderRadius.circular(Dimensions.radiusLarge),
-      child: Container(
-        padding: const EdgeInsets.all(Dimensions.paddingSizeLarge),
-        decoration: BoxDecoration(
-          color: context.theme.cardColor,
-          borderRadius: BorderRadius.circular(Dimensions.radiusLarge),
-          border: Border.all(color: context.customThemeColors.borderColor),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    match.title,
-                    style: AppTextStyles.sfProRoundedSemiBold
-                        .copyWith(fontSize: Dimensions.fontSizeLarge),
-                    overflow: TextOverflow.ellipsis,
-                  ),
+    return Container(
+      padding: const EdgeInsets.all(Dimensions.paddingSizeLarge),
+      decoration: BoxDecoration(
+        color: context.theme.cardColor,
+        borderRadius: BorderRadius.circular(Dimensions.radiusLarge),
+        border: Border.all(color: context.customThemeColors.borderColor),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  match.title,
+                  style: AppTextStyles.sfProRoundedSemiBold
+                      .copyWith(fontSize: Dimensions.fontSizeLarge),
+                  overflow: TextOverflow.ellipsis,
                 ),
-                _StatusChip(status: match.status),
-                PopupMenuButton<String>(
-                  onSelected: (v) {
-                    switch (v) {
-                      case 'data':
-                        onEnterData();
-                      case 'edit':
-                        onEdit();
-                      case 'delete':
-                        onDelete();
-                    }
-                  },
-                  itemBuilder: (context) => const [
-                    PopupMenuItem(value: 'data', child: Text('Enter data')),
-                    PopupMenuItem(value: 'edit', child: Text('Edit')),
-                    PopupMenuItem(value: 'delete', child: Text('Delete')),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: Dimensions.paddingSizeSmall),
-            Row(
-              children: [
-                Text(
-                  match.scoreLine,
-                  style: AppTextStyles.sfProRoundedBold
-                      .copyWith(fontSize: Dimensions.fontSizeExtraLarge),
-                ),
-                const Spacer(),
-                Flexible(
-                  child: Text(
-                    [
-                      if ((match.competitionName ?? '').isNotEmpty) match.competitionName!,
-                      if (match.date.isNotEmpty) match.date,
-                    ].join('  •  '),
-                    style: AppTextStyles.sfProRoundedRegular.copyWith(
-                      fontSize: Dimensions.fontSizeSmall,
-                      color: context.textTheme.bodySmall?.color,
-                    ),
-                    textAlign: TextAlign.end,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: Dimensions.paddingSizeSmall),
-            Row(
-              children: [
-                Icon(Icons.edit_note,
-                    size: 16, color: context.primaryColor),
-                const SizedBox(width: Dimensions.paddingSizeExtraSmall),
-                Text(
-                  'Tap to enter player stats',
-                  style: AppTextStyles.sfProRoundedMedium.copyWith(
+              ),
+              _StatusChip(status: match.status),
+              PopupMenuButton<String>(
+                onSelected: (v) {
+                  switch (v) {
+                    case 'edit':
+                      onEdit();
+                    case 'delete':
+                      onDelete();
+                  }
+                },
+                itemBuilder: (context) => const [
+                  PopupMenuItem(value: 'edit', child: Text('Edit')),
+                  PopupMenuItem(value: 'delete', child: Text('Delete')),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: Dimensions.paddingSizeSmall),
+          Row(
+            children: [
+              Text(
+                match.scoreLine,
+                style: AppTextStyles.sfProRoundedBold
+                    .copyWith(fontSize: Dimensions.fontSizeExtraLarge),
+              ),
+              const Spacer(),
+              Flexible(
+                child: Text(
+                  [
+                    if ((match.competitionName ?? '').isNotEmpty) match.competitionName!,
+                    if (match.date.isNotEmpty) match.date,
+                  ].join('  •  '),
+                  style: AppTextStyles.sfProRoundedRegular.copyWith(
                     fontSize: Dimensions.fontSizeSmall,
-                    color: context.primaryColor,
+                    color: context.textTheme.bodySmall?.color,
                   ),
+                  textAlign: TextAlign.end,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-              ],
-            ),
-          ],
-        ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

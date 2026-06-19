@@ -7,6 +7,7 @@ class AppSettingsEntity extends Equatable {
   final String? version;
   final bool verifyEmail;
   final bool maintenanceMode;
+  final bool userSelfRegistration;
 
   const AppSettingsEntity({
     required this.id,
@@ -14,6 +15,7 @@ class AppSettingsEntity extends Equatable {
     this.version,
     this.verifyEmail = false,
     this.maintenanceMode = false,
+    this.userSelfRegistration = true,
   });
 
   AppSettingsEntity copyWith({
@@ -21,6 +23,7 @@ class AppSettingsEntity extends Equatable {
     String? version,
     bool? verifyEmail,
     bool? maintenanceMode,
+    bool? userSelfRegistration,
     bool clearCurrentSeason = false,
   }) {
     return AppSettingsEntity(
@@ -30,10 +33,17 @@ class AppSettingsEntity extends Equatable {
       version: version ?? this.version,
       verifyEmail: verifyEmail ?? this.verifyEmail,
       maintenanceMode: maintenanceMode ?? this.maintenanceMode,
+      userSelfRegistration: userSelfRegistration ?? this.userSelfRegistration,
     );
   }
 
   @override
-  List<Object?> get props =>
-      [id, currentSeasonId, version, verifyEmail, maintenanceMode];
+  List<Object?> get props => [
+        id,
+        currentSeasonId,
+        version,
+        verifyEmail,
+        maintenanceMode,
+        userSelfRegistration,
+      ];
 }

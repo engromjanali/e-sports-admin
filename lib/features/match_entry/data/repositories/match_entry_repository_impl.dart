@@ -24,12 +24,12 @@ class MatchEntryRepositoryImpl implements MatchEntryRepository {
         motm: e.motm,
         result: e.result,
         notes: e.notes,
-        source: e.source,
+        seasonId: e.seasonId,
       );
 
   @override
-  ResultFuture<List<MatchEntryEntity>> getEntries(String matchId) =>
-      guardSupabase(() => _dataSource.getEntries(matchId));
+  ResultFuture<List<MatchEntryEntity>> getEntries(int seasonId) =>
+      guardSupabase(() => _dataSource.getEntries(seasonId));
 
   @override
   ResultFuture<MatchEntryEntity> upsertEntry(MatchEntryEntity entry) =>

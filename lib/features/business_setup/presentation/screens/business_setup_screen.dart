@@ -37,6 +37,7 @@ class _BusinessSetupViewState extends State<_BusinessSetupView> {
   final TextEditingController _versionController = TextEditingController();
   bool _maintenanceMode = false;
   bool _verifyEmail = false;
+  bool _userSelfRegistration = true;
   int? _currentSeasonId;
   bool _hydrated = false;
 
@@ -50,6 +51,7 @@ class _BusinessSetupViewState extends State<_BusinessSetupView> {
     _versionController.text = settings.version ?? '';
     _maintenanceMode = settings.maintenanceMode;
     _verifyEmail = settings.verifyEmail;
+    _userSelfRegistration = settings.userSelfRegistration;
     _currentSeasonId = settings.currentSeasonId;
     _hydrated = true;
   }
@@ -63,6 +65,7 @@ class _BusinessSetupViewState extends State<_BusinessSetupView> {
           : _versionController.text.trim(),
       verifyEmail: _verifyEmail,
       maintenanceMode: _maintenanceMode,
+      userSelfRegistration: _userSelfRegistration,
     );
     context.read<BusinessSetupBloc>().add(SaveBusinessSetup(updated));
   }
@@ -179,6 +182,25 @@ class _BusinessSetupViewState extends State<_BusinessSetupView> {
                         value: _verifyEmail,
                         onChanged: (value) =>
                             setState(() => _verifyEmail = value),
+                      ),
+                      SwitchListTile(
+                        contentPadding: EdgeInsets.zero,
+                        title: Text(
+                          'User Self Registration',
+                          style: AppTextStyles.sfProRoundedMedium.copyWith(
+                            fontSize: Dimensions.fontSizeDefault,
+                          ),
+                        ),
+                        subtitle: Text(
+                          'Allow new users to create their own account in the app.',
+                          style: AppTextStyles.sfProRoundedRegular.copyWith(
+                            fontSize: Dimensions.fontSizeSmall,
+                            color: context.textTheme.bodySmall?.color,
+                          ),
+                        ),
+                        value: _userSelfRegistration,
+                        onChanged: (value) =>
+                            setState(() => _userSelfRegistration = value),
                       ),
                       const SizedBox(height: Dimensions.spaceExtraLarge),
                       AppPrimaryButton(

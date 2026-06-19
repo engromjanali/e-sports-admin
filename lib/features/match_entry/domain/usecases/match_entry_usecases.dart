@@ -7,13 +7,13 @@ import '../repositories/match_entry_repository.dart';
 
 @lazySingleton
 class GetMatchEntriesUseCase
-    implements UseCase<List<MatchEntryEntity>, String> {
+    implements UseCase<List<MatchEntryEntity>, int> {
   final MatchEntryRepository _repository;
   GetMatchEntriesUseCase(this._repository);
 
   @override
-  ResultFuture<List<MatchEntryEntity>> call(String matchId) =>
-      _repository.getEntries(matchId);
+  ResultFuture<List<MatchEntryEntity>> call(int seasonId) =>
+      _repository.getEntries(seasonId);
 }
 
 @lazySingleton

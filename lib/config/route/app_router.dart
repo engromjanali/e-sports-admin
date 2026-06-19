@@ -4,7 +4,6 @@ import 'package:clean_boilerplate/features/hall_of_fame/presentation/screens/hal
 import 'package:clean_boilerplate/features/tags/presentation/screens/tags_screen.dart';
 import 'package:clean_boilerplate/features/home/presentation/screens/home_screen.dart';
 import 'package:clean_boilerplate/features/match/screen.dart';
-import 'package:clean_boilerplate/features/match/domain/entities/match_entity.dart';
 import 'package:clean_boilerplate/features/match/presentation/screens/match_screen.dart';
 import 'package:clean_boilerplate/features/match_entry/presentation/screens/match_entry_screen.dart';
 import 'package:clean_boilerplate/features/player/presentation/screens/player_screen.dart';
@@ -36,7 +35,7 @@ class AppRoutes {
   static const String seasons = '/seasons';
   static const String players = '/players';
   static const String matches = '/matches';
-  static const String matchEntries = '/matches/:matchId/entries';
+  static const String matchEntries = '/match-entries';
   static const String faqs = '/faqs';
   static const String competitions = '/competitions';
   static const String tags = '/tags';
@@ -53,9 +52,6 @@ class AppRoutes {
   static String getSplashRoute() => _splash;
 
   static String getLoginRoute() => _login;
-
-  static String getMatchEntriesRoute(String matchId) =>
-      '/matches/$matchId/entries';
 }
 
 /// Router configuration using go_router
@@ -142,13 +138,7 @@ final router = GoRouter(
     GoRoute(
       path: AppRoutes.matchEntries,
       name: 'matchEntries',
-      builder: (context, state) {
-        final matchId = state.pathParameters['matchId'] ?? '';
-        final match = state.extra is MatchEntity
-            ? state.extra as MatchEntity
-            : null;
-        return MatchEntryScreen(matchId: matchId, match: match);
-      },
+      builder: (context, state) => const MatchEntryScreen(),
     ),
 
     GoRoute(
