@@ -1,0 +1,15 @@
+{
+  "projects": {
+    "default": "e-ports-d00e1"
+  },
+  "targets": {
+    "e-ports-d00e1": {
+      "hosting": {
+        "admin": [
+          "esports-admin"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}
