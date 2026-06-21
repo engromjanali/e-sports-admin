@@ -9,6 +9,8 @@ class PlayerModel extends PlayerEntity {
     super.jerseyNumber,
     super.playerRoles,
     super.customTags,
+    super.email,
+    super.password,
   });
 
   factory PlayerModel.fromJson(Map<String, dynamic> json) {
@@ -20,6 +22,8 @@ class PlayerModel extends PlayerEntity {
       jerseyNumber: (json['jerseynumber'] as num?)?.toInt(),
       playerRoles: _extractNames(json['player_player_roles'], 'player_role'),
       customTags: _extractNames(json['player_custom_tags'], 'custom_tags'),
+      // Password is never read back into the form (left blank on edit).
+      email: json['email'] as String?,
     );
   }
 
@@ -33,12 +37,19 @@ class PlayerModel extends PlayerEntity {
   }
 
   /// Map used for inserts/updates — roles/tags are managed via junction tables.
+  ///
+  /// `email`/`password` are only written when supplied: this keeps roster-only
+  /// players (no account) intact and preserves the existing password on edit
+  /// when the password field is left blank.
   Map<String, dynamic> toWriteMap() {
-    return {
+    final map = <String, dynamic>{
       'name': name,
       'sort_name': sortName,
       'profileimageurl': profileImageUrl,
       'jerseynumber': jerseyNumber,
     };
+    if (email != null) map['email'] = email!.isEmpty ? null : email;
+    if (password != null && password!.isNotEmpty) map['password'] = password;
+    return map;
   }
 }

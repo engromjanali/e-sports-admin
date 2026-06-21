@@ -4,6 +4,7 @@ import 'package:clean_boilerplate/features/hall_of_fame/presentation/screens/hal
 import 'package:clean_boilerplate/features/tags/presentation/screens/tags_screen.dart';
 import 'package:clean_boilerplate/features/home/presentation/screens/home_screen.dart';
 import 'package:clean_boilerplate/features/match/screen.dart';
+import 'package:clean_boilerplate/features/privacy_policy/presentation/screens/privacy_policy_screen.dart';
 import 'package:clean_boilerplate/features/match/presentation/screens/match_screen.dart';
 import 'package:clean_boilerplate/features/match_entry/presentation/screens/match_entry_screen.dart';
 import 'package:clean_boilerplate/features/player/presentation/screens/player_screen.dart';
@@ -37,6 +38,7 @@ class AppRoutes {
   static const String matches = '/matches';
   static const String matchEntries = '/match-entries';
   static const String faqs = '/faqs';
+  static const String privacyPolicy = '/privacy-policy';
   static const String competitions = '/competitions';
   static const String tags = '/tags';
   static const String hallOfFame = '/hall-of-fame';
@@ -121,6 +123,12 @@ final router = GoRouter(
       path: AppRoutes.faqs,
       name: 'faqs',
       builder: (context, state) => const FaqScreen(),
+    ),
+
+    GoRoute(
+      path: AppRoutes.privacyPolicy,
+      name: 'privacyPolicy',
+      builder: (context, state) => const PrivacyPolicyScreen(),
     ),
 
     GoRoute(

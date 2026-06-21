@@ -72,6 +72,12 @@ class AppMenuDrawer extends StatelessWidget {
               location: location,
             ),
             _NavTile(
+              icon: Icons.privacy_tip_outlined,
+              label: 'Privacy Policy',
+              route: AppRoutes.privacyPolicy,
+              location: location,
+            ),
+            _NavTile(
               icon: Icons.label_rounded,
               label: 'Tag Management',
               route: AppRoutes.tags,

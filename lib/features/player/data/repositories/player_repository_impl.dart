@@ -21,6 +21,8 @@ class PlayerRepositoryImpl implements PlayerRepository {
         jerseyNumber: e.jerseyNumber,
         playerRoles: e.playerRoles,
         customTags: e.customTags,
+        email: e.email,
+        password: e.password,
       );
 
   @override

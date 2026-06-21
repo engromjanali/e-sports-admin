@@ -42,6 +42,9 @@ dependencies:
   # Media
   image_picker: ^1.2.1
 
+  # Rich text (WYSIWYG HTML editor for content like privacy policy)
+  html_editor_enhanced: ^2.6.0
+
   # Local Storage
   shared_preferences: ^2.5.4
   path_provider: ^2.1.5

@@ -30,6 +30,8 @@ class _PlayerFormSheetState extends State<PlayerFormSheet> {
   late final TextEditingController _nameController;
   late final TextEditingController _sortNameController;
   late final TextEditingController _jerseyController;
+  late final TextEditingController _emailController;
+  late final TextEditingController _passwordController;
 
   String? _imageUrl;
   late List<String> _roles;
@@ -45,6 +47,9 @@ class _PlayerFormSheetState extends State<PlayerFormSheet> {
     _sortNameController = TextEditingController(text: p?.sortName ?? '');
     _jerseyController =
         TextEditingController(text: p?.jerseyNumber?.toString() ?? '');
+    _emailController = TextEditingController(text: p?.email ?? '');
+    // Never pre-fill the password; blank on edit means "keep the current one".
+    _passwordController = TextEditingController();
     _imageUrl = p?.profileImageUrl;
     _roles = List<String>.from(p?.playerRoles ?? const []);
     _tags = List<String>.from(p?.customTags ?? const []);
@@ -55,6 +60,8 @@ class _PlayerFormSheetState extends State<PlayerFormSheet> {
     _nameController.dispose();
     _sortNameController.dispose();
     _jerseyController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
@@ -70,8 +77,41 @@ class _PlayerFormSheetState extends State<PlayerFormSheet> {
       jerseyNumber: int.tryParse(_jerseyController.text.trim()),
       playerRoles: _roles,
       customTags: _tags,
+      email: _emailController.text.trim().isEmpty
+          ? null
+          : _emailController.text.trim(),
+      password: _passwordController.text.isEmpty
+          ? null
+          : _passwordController.text,
     );
     Navigator.of(context).pop(entity);
+  }
+
+  static final RegExp _emailRegex = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
+
+  String? _validateEmail(String? value) {
+    final email = value?.trim() ?? '';
+    if (email.isEmpty) {
+      // An email is mandatory whenever a password is being set.
+      if (_passwordController.text.isNotEmpty) {
+        return 'Email is required to set a login';
+      }
+      return null;
+    }
+    if (!_emailRegex.hasMatch(email)) return 'Enter a valid email';
+    return null;
+  }
+
+  String? _validatePassword(String? value) {
+    final password = value ?? '';
+    final hasEmail = _emailController.text.trim().isNotEmpty;
+    if (password.isEmpty) {
+      // On create, a new login needs a password; on edit, blank keeps the old one.
+      if (!_isEditing && hasEmail) return 'Set a password for this login';
+      return null;
+    }
+    if (password.length < 6) return 'At least 6 characters';
+    return null;
   }
 
   @override
@@ -146,6 +186,46 @@ class _PlayerFormSheetState extends State<PlayerFormSheet> {
                     ),
                   ),
                 ],
+              ),
+              const SizedBox(height: Dimensions.spaceLarge),
+              Text(
+                'Login Account',
+                style: AppTextStyles.sfProRoundedSemiBold
+                    .copyWith(fontSize: Dimensions.fontSizeLarge),
+              ),
+              const SizedBox(height: Dimensions.paddingSizeExtraSmall),
+              Text(
+                _isEditing
+                    ? 'Leave the password blank to keep the current one.'
+                    : 'Set an email and password so this player can sign in to the app.',
+                style: AppTextStyles.sfProRoundedRegular.copyWith(
+                  fontSize: Dimensions.fontSizeSmall,
+                  color: context.textTheme.bodySmall?.color,
+                ),
+              ),
+              const SizedBox(height: Dimensions.spaceDefault),
+              CommonLabeledInputItemWidget(
+                label: 'Email',
+                hintText: 'player@example.com',
+                controller: _emailController,
+                keyboardType: TextInputType.emailAddress,
+                validator: _validateEmail,
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: Dimensions.paddingSizeDefault,
+                  vertical: Dimensions.paddingSizeDefault,
+                ),
+              ),
+              const SizedBox(height: Dimensions.spaceDefault),
+              CommonLabeledInputItemWidget(
+                label: 'Password',
+                hintText: _isEditing ? 'Unchanged' : 'At least 6 characters',
+                controller: _passwordController,
+                keyboardType: TextInputType.visiblePassword,
+                validator: _validatePassword,
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: Dimensions.paddingSizeDefault,
+                  vertical: Dimensions.paddingSizeDefault,
+                ),
               ),
               const SizedBox(height: Dimensions.spaceDefault),
               _TagSelector(

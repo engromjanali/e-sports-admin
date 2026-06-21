@@ -32,6 +32,7 @@ class AppConstants {
   static const String tableNews = 'news';
   static const String tableAppSettings = 'app_settings';
   static const String tableFaqs = 'faqs';
+  static const String tablePrivacyPolicy = 'privacy_policy';
   static const String tableCompetitions = 'competitions';
   static const String tableHallOfFame = 'hall_of_fame';
 
